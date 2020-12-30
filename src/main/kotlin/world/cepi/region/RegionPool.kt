@@ -3,27 +3,25 @@ package world.cepi.region;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
-
 /**
  * Represents a collection of regions. Regions in different pools
  * can overlap, but regions inside the same pool cannot.
  *
  * Regions in the same pool also need to have unique names.
  */
-public interface RegionPool extends Iterable<Region> {
+interface RegionPool : Iterable<Region> {
 
     /**
      * Gets an unmodifiable collection representation of all the
-     * {@link Region}s contained inside this pool.
+     * [Region]s contained inside this pool.
      *
      * @return A collection of regions inside this pool
      */
     @NotNull
-    Collection<Region> getRegions();
+    fun getRegions(): Collection<Region>
 
     /**
-     * Checks if a given {@link Region} resides inside this
+     * Checks if a given [Region] resides inside this
      * pool.
      *
      * @param region The given region
@@ -31,15 +29,15 @@ public interface RegionPool extends Iterable<Region> {
      * @return True, if given region is inside this pool.
      * False otherwise.
      */
-    boolean contains(Region region);
+    fun contains(region: Region): Boolean
 
     /**
-     * @return The amount of {@link Region}s inside this pool.
+     * @return The amount of [Region]s inside this pool.
      */
-    int size();
+    fun size(): Int
 
     /**
-     * Gets the {@link Region} inside this pool with the given name.
+     * Gets the [Region] inside this pool with the given name.
      *
      * @param name The given name
      *
@@ -47,10 +45,10 @@ public interface RegionPool extends Iterable<Region> {
      * or null, if it doesn't exist.
      */
     @Nullable
-    Region getRegion(@NotNull String name);
+    fun getRegion(@NotNull name: String): Region
 
     /**
-     * Creates a new {@link Region} inside this region pool.
+     * Creates a new [Region] inside this region pool.
      *
      * The creates region doesn't have any volume to begin with.
      *
@@ -61,10 +59,10 @@ public interface RegionPool extends Iterable<Region> {
      * @throws IllegalStateException If the name provided was not unique.
      */
     @NotNull
-    Region createRegion(@NotNull String name) throws IllegalStateException;
+    fun createRegion(@NotNull name: String);
 
     /**
-     * Removes a given {@link Region} from this pool.
+     * Removes a given [Region] from this pool.
      *
      * <p> Calling methods of a removed region or using it as a
      * parameter will throw an exception.
@@ -74,6 +72,6 @@ public interface RegionPool extends Iterable<Region> {
      * @throws IllegalStateException If the given region was not part of
      * this pool.
      */
-    void remove(@NotNull Region region) throws IllegalStateException;
+    fun remove(@NotNull region: Region)
 
 }

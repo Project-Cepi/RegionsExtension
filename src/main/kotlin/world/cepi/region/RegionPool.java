@@ -11,7 +11,7 @@ import java.util.Collection;
  *
  * Regions in the same pool also need to have unique names.
  */
-public interface RegionPool {
+public interface RegionPool extends Iterable<Region> {
 
     /**
      * Gets an unmodifiable collection representation of all the

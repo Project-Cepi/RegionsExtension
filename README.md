@@ -1,2 +1,2 @@
-# ExampleExtension
- An example extension for Minestom based off of Sabre/kotlin libs.
+# RegionsExtension
+ Provides tools and API to defining and utilizing 3-dimensional regions.

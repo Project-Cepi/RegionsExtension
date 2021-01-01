@@ -4,12 +4,18 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * Represents a collection of regions. Regions in different pools
+ * Represents a collection of [Region]s. Regions in different pools
  * can overlap, but regions inside the same pool cannot.
  *
  * Regions in the same pool also need to have unique names.
  */
-interface RegionPool : Iterable<Region> {
+interface RegionPool {
+
+    /**
+     * The name of this region pool.
+     */
+    @NotNull
+    fun getName(): String
 
     /**
      * Gets an unmodifiable collection representation of all the

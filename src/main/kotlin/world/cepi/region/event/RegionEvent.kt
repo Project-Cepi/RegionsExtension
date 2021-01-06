@@ -4,6 +4,8 @@ import world.cepi.region.Region;
 
 /**
  * Represents a [Region] related event.
+ *
+ * @since RegionAPI 1.0
  */
 interface RegionEvent {
 

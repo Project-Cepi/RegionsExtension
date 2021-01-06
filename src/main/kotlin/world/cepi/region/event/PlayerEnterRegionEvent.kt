@@ -7,6 +7,8 @@ import world.cepi.region.Region;
 
 /**
  * Represents an event that is called when player attempts to enter a [Region].
+ *
+ * @since RegionAPI 1.0
  */
 class PlayerEnterRegionEvent(player: Player, private val region: Region, positionInsideRegion: Position) : PlayerMoveEvent(player, positionInsideRegion), RegionEvent {
 

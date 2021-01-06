@@ -8,36 +8,49 @@ import net.minestom.server.instance.Instance
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Represents a 3-dimensional non-uniform region.
+ * (Though it can be uniform, if you define it like so.)
+ *
+ * @since RegionAPI 1.0
+ */
 interface Region : DataContainer {
 
     /**
      * @return The unique name of this region.
+     *
+     * @since RegionAPI 1.0
      */
-    @NotNull
     fun getName(): String
 
     /**
      * @return The [RegionPool] in which this region
      * resided in. Or null, if this region has been removed.
+     *
+     * @since RegionAPI 1.0
      */
-    @Nullable
     fun getPool(): RegionPool
 
     /**
      * @return An unmodifiable collection of worlds (Minestom [Instance]s),
      * that contain at least some part of this region.
+     *
+     * @since RegionAPI 1.0
      */
-    @NotNull
     fun getWorlds(): Collection<Instance>
 
     /**
      * @return True, if this region contains at least one block.
      * (Has any size.) False otherwise.
+     *
+     * @since RegionAPI 1.0
      */
     fun isDefined(): Boolean
 
     /**
      * @return The volume of this region in blocks.
+     *
+     * @since RegionAPI 1.0
      */
     fun getVolume(): Int
 
@@ -46,8 +59,9 @@ interface Region : DataContainer {
      * currently inside this region.
      *
      * @return Collection of players inside this region
+     *
+     * @since RegionAPI 1.0
      */
-    @NotNull
     fun getPlayers(): MutableCollection<Player>
 
     /**
@@ -55,8 +69,9 @@ interface Region : DataContainer {
      * currently inside this region.
      *
      * @return Collection of entities inside this region
+     *
+     * @since RegionAPI 1.0
      */
-    @NotNull
     fun getEntities(): MutableCollection<Entity>
 
     /**
@@ -67,8 +82,9 @@ interface Region : DataContainer {
      * @param types The given entity types. Null not allowed as an member.
      *
      * @return Collection of entities inside this region with a given type
+     *
+     * @since RegionAPI 1.0
      */
-    @NotNull
-    fun getEntities(@NotNull vararg types: EntityType): MutableCollection<Entity>
+    fun getEntities(vararg types: EntityType): MutableCollection<Entity>
 
 }

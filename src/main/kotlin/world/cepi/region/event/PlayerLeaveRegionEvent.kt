@@ -7,6 +7,8 @@ import world.cepi.region.Region;
 
 /**
  * Represents an event that is called when player attempts to leave a [Region].
+ *
+ * @since RegionAPI 1.0
  */
 class PlayerLeaveRegionEvent(player: Player, private val region: Region, positionOutsideRegion: Position)
     : PlayerMoveEvent(player, positionOutsideRegion), RegionEvent {

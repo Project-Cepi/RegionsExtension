@@ -4,31 +4,32 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 
 /**
- * Represents an object that provides the [Region]s API.
+ * Represents a RegionAPI implementation.
  *
- * Current version: 1.0
+ * <p> Current version: 1.0
+ *
+ * @since RegionAPI 1.0
  */
 interface RegionProvider {
 
     /**
-     * @return The Regions the API version this
-     * implementation supports.
+     * The RegionAPI version this implementation was
+     * made for.
+     *
+     * @since RegionAPI 1.0
      */
-    @NotNull
     fun getVersion(): String
 
     /**
      * @return The name of this Regions API
      * implementation.
      */
-    @NotNull
     fun getImplementationName(): String
 
     /**
      * @return An unmodifiable collection representation
      * of all the [RegionPool]s managed by this provider.
      */
-    @NotNull
     fun getPools(): Collection<RegionPool>
 
     /**
@@ -39,8 +40,7 @@ interface RegionProvider {
      *
      * @return The pool, with the given name, or null.
      */
-    @Nullable
-    fun getPool(@NotNull name: String): RegionPool?
+    fun getPool(name: String): RegionPool?
 
     /**
      * Creates a new [RegionPool], with the given name.
@@ -52,8 +52,7 @@ interface RegionProvider {
      * @throws IllegalStateException If a pool with the same
      * name already exists.
      */
-    @NotNull
-    fun createPool(@NotNull name: String): RegionPool
+    fun createPool(name: String): RegionPool
 
     /**
      * Removes the given [RegionPool].
@@ -66,6 +65,6 @@ interface RegionProvider {
      * @throws IllegalStateException If the pool is already
      * removed.
      */
-    fun removePool(@NotNull pool: RegionPool)
+    fun removePool(pool: RegionPool)
 
 }

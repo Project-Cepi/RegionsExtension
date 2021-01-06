@@ -8,13 +8,16 @@ import org.jetbrains.annotations.Nullable;
  * can overlap, but regions inside the same pool cannot.
  *
  * Regions in the same pool also need to have unique names.
+ *
+ * @since RegionAPI 1.0
  */
 interface RegionPool {
 
     /**
      * The name of this region pool.
+     *
+     * @since RegionAPI 1.0
      */
-    @NotNull
     fun getName(): String
 
     /**
@@ -22,8 +25,9 @@ interface RegionPool {
      * [Region]s contained inside this pool.
      *
      * @return A collection of regions inside this pool
+     *
+     * @since RegionAPI 1.0
      */
-    @NotNull
     fun getRegions(): Collection<Region>
 
     /**
@@ -34,11 +38,15 @@ interface RegionPool {
      *
      * @return True, if given region is inside this pool.
      * False otherwise.
+     *
+     * @since RegionAPI 1.0
      */
     fun contains(region: Region): Boolean
 
     /**
      * @return The amount of [Region]s inside this pool.
+     *
+     * @since RegionAPI 1.0
      */
     fun size(): Int
 
@@ -49,9 +57,10 @@ interface RegionPool {
      *
      * @return The region inside this pool with that name,
      * or null, if it doesn't exist.
+     *
+     * @since RegionAPI 1.0
      */
-    @Nullable
-    fun getRegion(@NotNull name: String): Region
+    fun getRegion(name: String): Region
 
     /**
      * Creates a new [Region] inside this region pool.
@@ -63,9 +72,10 @@ interface RegionPool {
      * @return The created region
      *
      * @throws IllegalStateException If the name provided was not unique.
+     *
+     * @since RegionAPI 1.0
      */
-    @NotNull
-    fun createRegion(@NotNull name: String);
+    fun createRegion(name: String);
 
     /**
      * Removes a given [Region] from this pool.
@@ -77,7 +87,9 @@ interface RegionPool {
      *
      * @throws IllegalStateException If the given region was not part of
      * this pool.
+     *
+     * @since RegionAPI 1.0
      */
-    fun remove(@NotNull region: Region)
+    fun remove(region: Region)
 
 }

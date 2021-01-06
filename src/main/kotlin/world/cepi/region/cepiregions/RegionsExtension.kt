@@ -1,7 +1,6 @@
 package world.cepi.region.cepiregions
 
 import net.minestom.server.extensions.Extension;
-import org.jetbrains.annotations.NotNull
 import world.cepi.region.RegionProvider
 
 class RegionsExtension : Extension() {
@@ -20,7 +19,23 @@ class RegionsExtension : Extension() {
 
         private lateinit var provider: CepiRegionProvider
 
-        @NotNull
+        /**
+         * Gets the [RegionProvider] implementation that
+         * supports the desired given version. The returned
+         * implementation might actually be newer than the
+         * exact given version, but this is done only when
+         * the newer version directly supports the older one.
+         * (i.e. old functions have the same behaviour) In
+         * other cases legacy support magic is engaged.
+         *
+         * @param version The desired version
+         *
+         * @return [RegionProvider] implementation for that
+         * version.
+         *
+         * @throws UnsupportedOperationException If the given
+         * version is not supported at all.
+         */
         fun getProvider(version: String): RegionProvider {
 
             when (version) {

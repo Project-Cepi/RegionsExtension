@@ -60,7 +60,7 @@ interface RegionPool {
      *
      * @since RegionAPI 1.0
      */
-    fun getRegion(name: String): Region
+    fun getRegion(name: String): Region?
 
     /**
      * Creates a new [Region] inside this region pool.
@@ -75,7 +75,7 @@ interface RegionPool {
      *
      * @since RegionAPI 1.0
      */
-    fun createRegion(name: String);
+    fun createRegion(name: String): Region
 
     /**
      * Removes a given [Region] from this pool.

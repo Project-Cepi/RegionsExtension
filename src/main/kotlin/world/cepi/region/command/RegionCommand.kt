@@ -4,6 +4,7 @@ import net.minestom.server.chat.ChatColor
 import net.minestom.server.command.CommandProcessor
 import net.minestom.server.command.CommandSender
 import net.minestom.server.entity.Player
+import net.minestom.server.utils.Position
 import world.cepi.region.Region
 import world.cepi.region.RegionPool
 import world.cepi.region.RegionProvider
@@ -31,27 +32,28 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
     override fun process(sender: CommandSender, command: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {
             sender.sendMessage("Usage:"
-                    + "\n  /region create <pool name> <region name>"
+                    + "\n  /$commandName create <pool name> <region name>"
                     + "\n   Creates a new region in a given regionpool."
-                    + "\n  /region delete <pool name> <region name>"
+                    + "\n  /$commandName delete <pool name> <region name>"
                     + "\n   Deletes a region in a given regionpool."
-                    + "\n  /region wand"
-                    + "\n   Gets the item that is used to make block"
-                    + "\n   selections."
-                    + "\n  /region addblocks <pool name> <region name>"
+                    + "\n  /$commandName pos1 [<coordinates>]"
+                    + "\n   Sets/gets the first position for making a selection."
+                    + "\n  /$commandName pos2 [<coordinates>]"
+                    + "\n   Sets/gets the second position for making a selection."
+                    + "\n  /$commandName addblocks <pool name> <region name>"
                     + "\n   Adds the selected blocks to the region in the"
                     + "\b   given regionpool."
-                    + "\n  /region removeblocks <pool name> <region name>"
+                    + "\n  /$commandName removeblocks <pool name> <region name>"
                     + "\n   Removes the selected blocks from the region in"
                     + "\n   the given regionpool."
-                    + "\n  /region list [<pool name>]"
+                    + "\n  /$commandName list [<pool name>]"
                     + "\n   Lists all the regions in the given regionpool,"
                     + "\n   or all the pools if argument omitted."
-                    + "\n  /region show <pool name> <region name>"
+                    + "\n  /$commandName show <pool name> <region name>"
                     + "\n   Visually show the region in the given regionpool."
-                    + "\n  /region createpool <pool name>"
+                    + "\n  /$commandName createpool <pool name>"
                     + "\n   Creates a new regionpool."
-                    + "\n  /region deletepool <pool name>"
+                    + "\n  /$commandName deletepool <pool name>"
                     + "\n   Deletes a regionpool."
 
                 +  "\nImplementation: ${provider.getImplementationName()} RegionAPI: ${provider.getVersion()}"
@@ -61,7 +63,7 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
 
         if (args[0] == "create") {
             if (args.size != 3) {
-                sender.sendMessage("Usage: /region create <pool name> <region name>")
+                sender.sendMessage("Usage: /$commandName create <pool name> <region name>")
                 return true
             }
 
@@ -96,7 +98,7 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
         }
         else if (args[0] == "delete") {
             if (args.size != 3) {
-                sender.sendMessage("Usage: /region delete <pool name> <region name>")
+                sender.sendMessage("Usage: /$commandName delete <pool name> <region name>")
                 return true
             }
 
@@ -129,8 +131,21 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
             sender.sendMessage("Region deleted from pool ${pool.getName()}: ${region.getName()}")
             return true
         }
-        else if (args[0] == "wand") {
-            // TODO: Implement
+        else if (args[0] == "pos1" || args[1] == "pos2") {
+            val pos = if (args[0] == "pos1") 1 else 2
+            val position: Position
+
+            if (args.size == 1) {
+                if (sender !is Player) {
+                    sender.sendMessage("${ChatColor.RED}Only players can use interactive coordinates." +
+                            "\nUse /$commandName pos$pos <coordinates>, instead.")
+                    return true
+                }
+
+
+            }
+
+
         }
         else if (args[0] == "addblocks") {
             // TODO: Implement
@@ -169,20 +184,20 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
 
                 var list = ""
 
-                for (pool in pools) {
+                for (region in pool.getRegions()) {
                     list = list + ", " + pool.getName()
                 }
 
                 list = list.replaceFirst(", ", "")
 
                 sender.sendMessage(
-                    "Total of ${pools.size} region${if (pools.size == 1) "s" else ""} in pool " +
+                    "Total of ${pool.size()} region${if (pool.size() == 1) "s" else ""} in pool " +
                             "${pool.getName()}: $list"
                 )
                 return true
             }
             else {
-                sender.sendMessage("Usage: /region list or /region list <pool name>")
+                sender.sendMessage("Usage: /$commandName list or /$commandName list <pool name>")
                 return true
             }
         }
@@ -191,7 +206,7 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
         }
         else if (args[0] == "createpool") {
             if (args.size != 1) {
-                sender.sendMessage("Usage: /region createpool <pool name>")
+                sender.sendMessage("Usage: /$commandName createpool <pool name>")
                 return true
             }
 
@@ -223,7 +238,7 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
         }
         else if (args[0] == "deletepool") {
             if (args.size != 1) {
-                sender.sendMessage("Usage: /region createpool <pool name>")
+                sender.sendMessage("Usage: /$commandName createpool <pool name>")
                 return true
             }
 

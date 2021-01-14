@@ -1,17 +1,36 @@
 package world.cepi.region.command
 
+import net.minestom.server.MinecraftServer
 import net.minestom.server.chat.ChatColor
 import net.minestom.server.command.CommandProcessor
 import net.minestom.server.command.CommandSender
 import net.minestom.server.entity.Player
+import net.minestom.server.instance.block.Block
+import net.minestom.server.item.Material
+import net.minestom.server.utils.BlockPosition
 import net.minestom.server.utils.Position
+import net.minestom.server.utils.block.BlockIterator
 import world.cepi.region.Region
 import world.cepi.region.RegionPool
 import world.cepi.region.RegionProvider
 import world.cepi.region.cepiregions.CepiRegion
 import world.cepi.region.cepiregions.CepiRegionProvider
+import kotlin.math.abs
+
+class Selection {
+
+    var pos1: BlockPosition? = null
+    var pos2: BlockPosition? = null
+
+}
 
 class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
+
+    private val selectedPositions = HashMap<CommandSender, Selection>()
+
+    init {
+
+    }
 
     override fun getCommandName(): String {
         return "region"
@@ -133,7 +152,7 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
         }
         else if (args[0] == "pos1" || args[1] == "pos2") {
             val pos = if (args[0] == "pos1") 1 else 2
-            val position: Position
+            val position: BlockPosition
 
             if (args.size == 1) {
                 if (sender !is Player) {
@@ -142,10 +161,51 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
                     return true
                 }
 
+                val world = sender.instance
+                if (world == null) {
+                    sender.sendMessage("")
+                    return true
+                }
+
+                val iterator = BlockIterator(sender, 100)
+                var result: BlockPosition? = null
+
+                while (iterator.hasNext()) {
+                    val next = iterator.next()
+                    if (!Block.fromStateId(world.getBlockStateId(next)).isAir) {
+                        result = next
+                        break
+                    }
+                }
+
+                if (result == null) {
+                    sender.sendMessage("${ChatColor.RED}No block in sight")
+                    return true
+                }
+
+                position = result
 
             }
+            else {
+                if (args.size != 4) {
+                    sender.sendMessage("Usage: /$commandName pos$pos [<x> <y> <z>]")
+                    return true
+                }
 
+                // TODO: Support for both absolutes and relatives
+                return true
+            }
 
+            val selection = selectedPositions.getOrDefault(sender, Selection())
+            if (pos == 1) selection.pos1 = position
+            else selection.pos2 = position
+            sender.sendMessage("Selected pos$pos (${position.x}, ${position.y}, ${position.z})")
+            if (selection.pos1 != null && selection.pos2 != null) {
+                val width = abs(selection.pos1!!.x - selection.pos2!!.x)
+                val height = abs(selection.pos1!!.y - selection.pos2!!.y)
+                val depth = abs(selection.pos1!!.z - selection.pos2!!.z)
+                sender.sendMessage("Selection size: ${width * height * depth} blocks")
+            }
         }
         else if (args[0] == "addblocks") {
             // TODO: Implement

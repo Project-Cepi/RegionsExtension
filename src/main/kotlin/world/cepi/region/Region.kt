@@ -5,6 +5,7 @@ import net.minestom.server.entity.Entity
 import net.minestom.server.entity.EntityType
 import net.minestom.server.entity.Player
 import net.minestom.server.instance.Instance
+import net.minestom.server.utils.BlockPosition
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,6 +54,34 @@ interface Region : DataContainer {
      * @since RegionAPI 1.0
      */
     fun getVolume(): Int
+
+    /**
+     * Adds the given selection to this region.
+     *
+     * @param pos1 The first corner of the selection
+     * @param pos2 The second corner of the selection
+     * @param world The [Instance] where the selection is supposed to be in.
+     *
+     * @return The amount of blocks that were added in total. This can be less than the
+     * actual selection, if part of the selected area was already in the region.
+     *
+     * @since RegionAPI 1.0
+     */
+    fun addBlocks(pos1: BlockPosition, pos2: BlockPosition, world: Instance): Int
+
+    /**
+     * Removes the given selection from this region
+     *
+     * @param pos1 The first corner of the selection
+     * @param pos2 The second corner of the selection
+     * @param world The [Instance] where the selection is supposed to be in.
+     *
+     * @return The amount of blocks that were removed in total. This can be less than the
+     * actual selection, if the selected area was not entirely inside the region.
+     *
+     * @since RegionAPI 1.0
+     */
+    fun removeBlocks(pos1: BlockPosition, pos2: BlockPosition, world: Instance): Int
 
     /**
      * Creates a collection of all the players that are

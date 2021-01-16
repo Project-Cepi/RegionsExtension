@@ -5,6 +5,7 @@ import net.minestom.server.chat.ChatColor
 import net.minestom.server.command.CommandProcessor
 import net.minestom.server.command.CommandSender
 import net.minestom.server.entity.Player
+import net.minestom.server.event.player.PlayerDisconnectEvent
 import net.minestom.server.instance.block.Block
 import net.minestom.server.item.Material
 import net.minestom.server.utils.BlockPosition
@@ -15,6 +16,7 @@ import world.cepi.region.RegionPool
 import world.cepi.region.RegionProvider
 import world.cepi.region.cepiregions.CepiRegion
 import world.cepi.region.cepiregions.CepiRegionProvider
+import java.lang.NumberFormatException
 import kotlin.math.abs
 
 class Selection {
@@ -29,7 +31,9 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
     private val selectedPositions = HashMap<CommandSender, Selection>()
 
     init {
-
+        MinecraftServer.getGlobalEventHandler().addEventCallback(PlayerDisconnectEvent::class.java) {
+            selectedPositions.remove(it.player)
+        }
     }
 
     override fun getCommandName(): String {
@@ -191,6 +195,21 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
                     sender.sendMessage("Usage: /$commandName pos$pos [<x> <y> <z>]")
                     return true
                 }
+
+                val x: Int
+                val y: Int
+                val z: Int
+
+                try {
+                    x = Integer.parseInt(args[1])
+                    y = Integer.parseInt(args[2])
+                    z = Integer.parseInt(args[3])
+                } catch (e: NumberFormatException) {
+                    sender.sendMessage("${ChatColor.RED}Invalid coordinates: ${args[1]} ${args[2]} ${args[3]}")
+                    return true
+                }
+
+                position = BlockPosition(x, y, z)
 
                 // TODO: Support for both absolutes and relatives
                 return true

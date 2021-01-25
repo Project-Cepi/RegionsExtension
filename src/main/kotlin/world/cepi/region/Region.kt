@@ -4,7 +4,9 @@ import net.minestom.server.data.DataContainer
 import net.minestom.server.entity.Entity
 import net.minestom.server.entity.EntityType
 import net.minestom.server.entity.Player
+import net.minestom.server.instance.Chunk
 import net.minestom.server.instance.Instance
+import net.minestom.server.instance.block.Block
 import net.minestom.server.utils.BlockPosition
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,6 +58,19 @@ interface Region : DataContainer {
     fun getVolume(): Int
 
     /**
+     * Checks if the given block position is inside of this
+     * region in the given [Instance].
+     *
+     * @param pos, The block position
+     * @param world, the Instance
+     *
+     * @return True, only if the block is inside this region.
+     *
+     * @since RegionAPI 1.0
+     */
+    fun isInside(pos: BlockPosition, world: Instance): Boolean
+
+    /**
      * Adds the given selection to this region.
      *
      * @param pos1 The first corner of the selection
@@ -82,6 +97,20 @@ interface Region : DataContainer {
      * @since RegionAPI 1.0
      */
     fun removeBlocks(pos1: BlockPosition, pos2: BlockPosition, world: Instance): Int
+
+    /**
+     * Creates an iterator that iterates through the block
+     * positions inside the given chunk that are inside this region.
+     *
+     * @param chunkX The chunk x-coordinate
+     * @param chunkZ The chunk z-coordinate
+     * @param world The [Instance] where the chunk resides.
+     *
+     * @return Iterator for blocks inside this region in the chunk.
+     *
+     * @since RegionAPI 1.0
+     */
+    fun iterateChunk(chunkX: Int, chunkZ: Int, world: Instance) : Iterator<BlockPosition>
 
     /**
      * Creates a collection of all the players that are

@@ -11,6 +11,8 @@ interface RegionEvent {
 
     /**
      * @return The [Region] in question.
+     *
+     * @since RegionAPI 1.0
      */
     fun getRegion(): Region
 

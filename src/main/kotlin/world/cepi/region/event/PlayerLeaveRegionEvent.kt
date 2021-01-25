@@ -15,6 +15,8 @@ class PlayerLeaveRegionEvent(player: Player, private val region: Region, positio
 
     /**
      * @return The [Region] that is being entered.
+     *
+     * @since RegionAPI 1.0
      */
     override fun getRegion(): Region {
         return region

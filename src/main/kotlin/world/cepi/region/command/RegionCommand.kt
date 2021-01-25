@@ -4,19 +4,18 @@ import net.minestom.server.MinecraftServer
 import net.minestom.server.chat.ChatColor
 import net.minestom.server.command.CommandProcessor
 import net.minestom.server.command.CommandSender
+import net.minestom.server.entity.Entity
 import net.minestom.server.entity.Player
 import net.minestom.server.event.player.PlayerDisconnectEvent
+import net.minestom.server.instance.Instance
 import net.minestom.server.instance.block.Block
-import net.minestom.server.item.Material
 import net.minestom.server.utils.BlockPosition
-import net.minestom.server.utils.Position
 import net.minestom.server.utils.block.BlockIterator
 import world.cepi.region.Region
 import world.cepi.region.RegionPool
 import world.cepi.region.RegionProvider
-import world.cepi.region.cepiregions.CepiRegion
-import world.cepi.region.cepiregions.CepiRegionProvider
 import java.lang.NumberFormatException
+import java.util.*
 import kotlin.math.abs
 
 class Selection {
@@ -63,10 +62,10 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
                     + "\n   Sets/gets the first position for making a selection."
                     + "\n  /$commandName pos2 [<coordinates>]"
                     + "\n   Sets/gets the second position for making a selection."
-                    + "\n  /$commandName addblocks <pool name> <region name>"
+                    + "\n  /$commandName addblocks <pool name> <region name> [<world uuid>]"
                     + "\n   Adds the selected blocks to the region in the"
                     + "\b   given regionpool."
-                    + "\n  /$commandName removeblocks <pool name> <region name>"
+                    + "\n  /$commandName removeblocks <pool name> <region name> [<world uuid>]"
                     + "\n   Removes the selected blocks from the region in"
                     + "\n   the given regionpool."
                     + "\n  /$commandName list [<pool name>]"
@@ -226,11 +225,70 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
                 sender.sendMessage("Selection size: ${width * height * depth} blocks")
             }
         }
-        else if (args[0] == "addblocks") {
-            // TODO: Implement
-        }
-        else if (args[0] == "removeblocks") {
-            // TODO: Implement
+        else if (args[0] == "addblocks" || args[0] == "removeblocks") {
+            if (args.size != 3 && args.size != 4) {
+                sender.sendMessage("Usage: /$commandName ${args[0]} <pool name> <region name> [<world uuid>]")
+                return true
+            }
+
+            val pool = provider.getPool(args[1])
+
+            if (pool == null) {
+                sender.sendMessage(
+                    "${ChatColor.RED}Region pool doesn't exist in implementation " +
+                            "${provider.getImplementationName()}: ${args[1]}"
+                )
+                return true
+            }
+
+            val region = pool.getRegion(args[2])
+
+            if (region == null) {
+                sender.sendMessage("${ChatColor.RED}Region doesn't exist in pool ${pool.getName()}: ${args[2]}")
+                return true
+            }
+
+            val selection = selectedPositions[sender]
+
+            if (selection?.pos1 == null || selection.pos2 == null) {
+                sender.sendMessage("${ChatColor.RED}Please make a selection first, using /$commandName pos1/pos2.")
+                return true
+            }
+
+            var world: Instance? = null
+
+            if (args.size == 4) {
+                for (w in MinecraftServer.getInstanceManager().instances) {
+                    if (w.uniqueId.toString() == args[3]) {
+                        world = w
+                        break
+                    }
+                }
+
+                if (world == null) {
+                    sender.sendMessage("${ChatColor.RED}World '${args[3]}' could not be found.")
+                    return true
+                }
+            }
+            else if (sender is Entity && sender.instance != null) {
+                world = sender.instance!!
+            }
+            else {
+                sender.sendMessage("${ChatColor.RED}Could not find out the world were you are in. " +
+                        "Please use /$commandName ${args[0]} <world uuid>")
+                return true
+            }
+
+            if (args[0] == "addblocks") {
+                val result = region.addBlocks(selection.pos1!!, selection.pos2!!, world)
+                sender.sendMessage("$result block${if (result != 1) "s" else ""} " +
+                        "were added to region ${region.getName()} in pool ${pool.getName()}.")
+            }
+            else if (args[0] == "removeblocks") {
+                val result = region.removeBlocks(selection.pos1!!, selection.pos2!!, world)
+                sender.sendMessage("$result block${if (result != 1) "s" else ""} " +
+                        "were removed from region ${region.getName()} in pool ${pool.getName()}.")
+            }
         }
         else if (args[0] == "list") {
             if (args.size == 1) {
@@ -281,10 +339,75 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
             }
         }
         else if (args[0] == "show") {
-            // TODO: Implement
+            if (sender !is Player) {
+                sender.sendMessage("${ChatColor.RED}This subcommand is player-only.")
+                return true
+            }
+
+            if (args.size != 3 && args.size != 4) {
+                sender.sendMessage("Usage: /$commandName ${args[0]} <pool name> <region name> [<range>]")
+                return true
+            }
+
+            val pool = provider.getPool(args[1])
+
+            if (pool == null) {
+                sender.sendMessage(
+                    "${ChatColor.RED}Region pool doesn't exist in implementation " +
+                            "${provider.getImplementationName()}: ${args[1]}"
+                )
+                return true
+            }
+
+            val region = pool.getRegion(args[2])
+
+            if (region == null) {
+                sender.sendMessage("${ChatColor.RED}Region doesn't exist in pool ${pool.getName()}: ${args[2]}")
+                return true
+            }
+
+            val range: Int
+
+            if (args.size == 4) {
+                try {
+                    range = Integer.parseInt(args[3])
+                } catch (e: NumberFormatException) {
+                    sender.sendMessage("${ChatColor.RED}Invalid number ${args[3]}.")
+                    return true
+                }
+
+                if (range < 1) {
+                    sender.sendMessage("${ChatColor.RED}Range must be at least one.")
+                    return true
+                }
+            }
+            else range = 10
+
+            val world = sender.instance
+
+            if (world == null) {
+                sender.sendMessage("${ChatColor.RED}Your world could not be determined.")
+                return true
+            }
+
+            // ??? Huh? !!!! Wha?
+            val chunkX: Int = sender.chunk?.chunkX!!
+            val chunkZ: Int = sender.chunk?.chunkZ!!
+
+            TODO("Not implemented yet")
+
+            for (x in -range .. range) {
+                for (z in -range .. range) {
+                    val iterator = region.iterateChunk(chunkX + x, chunkZ + z, world)
+
+                    // TODO: Highlight all the blocks that are produced by the iterator.
+                }
+            }
+
+            return true
         }
         else if (args[0] == "createpool") {
-            if (args.size != 1) {
+            if (args.size != 2) {
                 sender.sendMessage("Usage: /$commandName createpool <pool name>")
                 return true
             }
@@ -316,8 +439,8 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
             return true
         }
         else if (args[0] == "deletepool") {
-            if (args.size != 1) {
-                sender.sendMessage("Usage: /$commandName createpool <pool name>")
+            if (args.size != 2) {
+                sender.sendMessage("Usage: /$commandName deletepool <pool name>")
                 return true
             }
 

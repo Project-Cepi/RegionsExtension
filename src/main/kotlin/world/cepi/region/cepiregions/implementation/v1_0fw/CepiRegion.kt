@@ -5,31 +5,21 @@ import net.minestom.server.entity.Entity
 import net.minestom.server.entity.EntityType
 import net.minestom.server.entity.Player
 import net.minestom.server.instance.Instance
+import net.minestom.server.instance.block.Block
 import net.minestom.server.utils.BlockPosition
 import world.cepi.region.Region
 import world.cepi.region.RegionPool
 
-class CepiRegion(private val name: String, private val pool: CepiRegionPool) : Region {
+class CepiRegion(override val name: String, override val pool: CepiRegionPool, val instance: Instance) : Region {
 
-    override fun getName(): String {
-        TODO("Not yet implemented")
-    }
+    val positions: List<Pair<BlockPosition, BlockPosition>> = listOf()
 
-    override fun getPool(): RegionPool {
-        TODO("Not yet implemented")
-    }
+    override val instances = listOf(instance)
 
-    override fun getWorlds(): Collection<Instance> {
-        TODO("Not yet implemented")
-    }
+    override val defined = positions.isEmpty()
 
-    override fun isDefined(): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun getVolume(): Int {
-        TODO("Not yet implemented")
-    }
+    // TODO
+    override val volume = 0
 
     override fun isInside(pos: BlockPosition, world: Instance): Boolean {
         TODO("Not yet implemented")
@@ -56,14 +46,6 @@ class CepiRegion(private val name: String, private val pool: CepiRegionPool) : R
     }
 
     override fun getEntities(vararg types: EntityType): MutableCollection<Entity> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getData(): Data? {
-        TODO("Not yet implemented")
-    }
-
-    override fun setData(data: Data?) {
         TODO("Not yet implemented")
     }
 

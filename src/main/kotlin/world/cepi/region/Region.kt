@@ -40,7 +40,7 @@ interface Region : DataContainer {
      *
      * @since RegionAPI 1.0
      */
-    val worlds: Collection<Instance>
+    val instances: Collection<Instance>
 
     /**
      * True, if this region contains at least one block.

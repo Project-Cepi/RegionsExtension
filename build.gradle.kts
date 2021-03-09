@@ -31,13 +31,16 @@ dependencies {
     implementation(kotlin("reflect"))
 
     // Compile Minestom into project
-    implementation("com.github.Minestom:Minestom:-SNAPSHOT")
+    implementation("com.github.Minestom:Minestom:7241dbdcf7")
 
     // OkHttp
     implementation("com.squareup.okhttp3", "okhttp", "4.9.0")
 
     // import kotlinx serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.1.0")
+
+    // implement KStom
+    implementation("com.github.Project-Cepi:KStom:6d054839bf")
 }
 
 tasks.withType<Test> {
@@ -48,3 +51,6 @@ java {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_11
 }
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> { kotlinOptions.jvmTarget = "11" }
+val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks

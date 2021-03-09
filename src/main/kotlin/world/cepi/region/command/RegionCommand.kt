@@ -4,6 +4,8 @@ import net.minestom.server.MinecraftServer
 import net.minestom.server.chat.ChatColor
 import net.minestom.server.command.CommandProcessor
 import net.minestom.server.command.CommandSender
+import net.minestom.server.command.builder.Command
+import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.entity.Entity
 import net.minestom.server.entity.Player
 import net.minestom.server.event.player.PlayerDisconnectEvent
@@ -11,6 +13,8 @@ import net.minestom.server.instance.Instance
 import net.minestom.server.instance.block.Block
 import net.minestom.server.utils.BlockPosition
 import net.minestom.server.utils.block.BlockIterator
+import world.cepi.kstom.command.arguments.asSubcommand
+import world.cepi.kstom.command.addSyntax
 import world.cepi.region.Region
 import world.cepi.region.RegionPool
 import world.cepi.region.RegionProvider
@@ -25,7 +29,73 @@ class Selection {
 
 }
 
-class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
+class RegionCommand(val provider: RegionProvider) : Command("region") {
+
+    private val selectedPositions = HashMap<CommandSender, Selection>()
+
+    init {
+        MinecraftServer.getGlobalEventHandler().addEventCallback(PlayerDisconnectEvent::class.java) {
+            selectedPositions.remove(it.player)
+        }
+
+        val create = "create".asSubcommand()
+        val delete = "delete".asSubcommand()
+
+        val pos1 = "pos1".asSubcommand()
+        val pos2 = "pos2".asSubcommand()
+
+        val blocks = "blocks".asSubcommand()
+        val add = "add".asSubcommand()
+        val remove = "remove".asSubcommand()
+
+        val list = "list".asSubcommand()
+
+        val show = "show".asSubcommand()
+
+        val pool = "pool".asSubcommand()
+
+        val poolName = ArgumentType.DynamicWord("poolName").fromRestrictions { provider.pools.any { pool -> pool.name == it } }
+
+        val newRegionName = ArgumentType.String("newRegionName")
+
+        // TODO kotlin """
+        setDefaultExecutor { sender, args ->
+            sender.sendMessage("Usage:"
+                    + "\n  /$name create <pool name> <region name>"
+                    + "\n   Creates a new region in a given regionpool."
+                    + "\n  /$name delete <pool name> <region name>"
+                    + "\n   Deletes a region in a given regionpool."
+                    + "\n  /$name pos1 [<coordinates>]"
+                    + "\n   Sets/gets the first position for making a selection."
+                    + "\n  /$name pos2 [<coordinates>]"
+                    + "\n   Sets/gets the second position for making a selection."
+                    + "\n  /$name addblocks <pool name> <region name> [<world uuid>]"
+                    + "\n   Adds the selected blocks to the region in the"
+                    + "\b   given regionpool."
+                    + "\n  /$name removeblocks <pool name> <region name> [<world uuid>]"
+                    + "\n   Removes the selected blocks from the region in"
+                    + "\n   the given regionpool."
+                    + "\n  /$name list [<pool name>]"
+                    + "\n   Lists all the regions in the given regionpool,"
+                    + "\n   or all the pools if argument omitted."
+                    + "\n  /$name show <pool name> <region name>"
+                    + "\n   Visually show the region in the given regionpool."
+                    + "\n  /$name createpool <pool name>"
+                    + "\n   Creates a new regionpool."
+                    + "\n  /$name deletepool <pool name>"
+                    + "\n   Deletes a regionpool."
+
+                    +  "\nImplementation: ${provider.implementationName} RegionAPI: ${provider.version}"
+            )
+        }
+
+        addSyntax(create, pool, newRegionName) { sender, args ->
+
+        }
+    }
+}
+
+class OldRegionCommand(private val provider: RegionProvider) : CommandProcessor {
 
     private val selectedPositions = HashMap<CommandSender, Selection>()
 
@@ -52,37 +122,6 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
     }
 
     override fun process(sender: CommandSender, command: String, args: Array<out String>): Boolean {
-        if (args.isEmpty()) {
-            sender.sendMessage("Usage:"
-                    + "\n  /$commandName create <pool name> <region name>"
-                    + "\n   Creates a new region in a given regionpool."
-                    + "\n  /$commandName delete <pool name> <region name>"
-                    + "\n   Deletes a region in a given regionpool."
-                    + "\n  /$commandName pos1 [<coordinates>]"
-                    + "\n   Sets/gets the first position for making a selection."
-                    + "\n  /$commandName pos2 [<coordinates>]"
-                    + "\n   Sets/gets the second position for making a selection."
-                    + "\n  /$commandName addblocks <pool name> <region name> [<world uuid>]"
-                    + "\n   Adds the selected blocks to the region in the"
-                    + "\b   given regionpool."
-                    + "\n  /$commandName removeblocks <pool name> <region name> [<world uuid>]"
-                    + "\n   Removes the selected blocks from the region in"
-                    + "\n   the given regionpool."
-                    + "\n  /$commandName list [<pool name>]"
-                    + "\n   Lists all the regions in the given regionpool,"
-                    + "\n   or all the pools if argument omitted."
-                    + "\n  /$commandName show <pool name> <region name>"
-                    + "\n   Visually show the region in the given regionpool."
-                    + "\n  /$commandName createpool <pool name>"
-                    + "\n   Creates a new regionpool."
-                    + "\n  /$commandName deletepool <pool name>"
-                    + "\n   Deletes a regionpool."
-
-                +  "\nImplementation: ${provider.implementationName} RegionAPI: ${provider.version}"
-            )
-            return true
-        }
-
         if (args[0] == "create") {
             if (args.size != 3) {
                 sender.sendMessage("Usage: /$commandName create <pool name> <region name>")

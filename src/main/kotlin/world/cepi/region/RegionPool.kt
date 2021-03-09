@@ -1,7 +1,4 @@
-package world.cepi.region;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+package world.cepi.region
 
 /**
  * Represents a collection of [Region]s. Regions in different pools

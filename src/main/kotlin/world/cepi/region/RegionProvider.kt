@@ -1,8 +1,5 @@
 package world.cepi.region
 
-import org.jetbrains.annotations.NotNull
-import org.jetbrains.annotations.Nullable
-
 /**
  * Represents a RegionAPI implementation.
  *

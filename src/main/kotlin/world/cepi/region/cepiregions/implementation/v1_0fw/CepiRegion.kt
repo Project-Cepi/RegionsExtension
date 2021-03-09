@@ -5,31 +5,32 @@ import net.minestom.server.entity.Entity
 import net.minestom.server.entity.EntityType
 import net.minestom.server.entity.Player
 import net.minestom.server.instance.Instance
-import net.minestom.server.instance.block.Block
 import net.minestom.server.utils.BlockPosition
 import world.cepi.region.Region
-import world.cepi.region.RegionPool
+import world.cepi.region.Selection
 
 class CepiRegion(override val name: String, override val pool: CepiRegionPool, val instance: Instance) : Region {
 
-    val positions: List<Pair<BlockPosition, BlockPosition>> = listOf()
+    private var _data: Data? = null
+
+    val selections: List<Selection> = listOf()
 
     override val instances = listOf(instance)
 
-    override val defined = positions.isEmpty()
+    override val defined
+        get() = selections.isEmpty()
 
     // TODO
     override val volume = 0
 
-    override fun isInside(pos: BlockPosition, world: Instance): Boolean {
+    override fun isInside(pos: BlockPosition, world: Instance) =
+        selections.any { it.isInside(instance, pos) }
+
+    override fun addBlocks(pos1: BlockPosition, pos2: BlockPosition, instance: Instance): Int {
         TODO("Not yet implemented")
     }
 
-    override fun addBlocks(pos1: BlockPosition, pos2: BlockPosition, world: Instance): Int {
-        TODO("Not yet implemented")
-    }
-
-    override fun removeBlocks(pos1: BlockPosition, pos2: BlockPosition, world: Instance): Int {
+    override fun removeBlocks(pos1: BlockPosition, pos2: BlockPosition, instance: Instance): Int {
         TODO("Not yet implemented")
     }
 
@@ -37,16 +38,19 @@ class CepiRegion(override val name: String, override val pool: CepiRegionPool, v
         TODO("Not yet implemented")
     }
 
-    override fun getPlayers(): MutableCollection<Player> {
-        TODO("Not yet implemented")
-    }
+    override val entities: Collection<Entity> =
+        selections.map { it.findInside(instance) }.flatten()
 
-    override fun getEntities(): MutableCollection<Entity> {
-        TODO("Not yet implemented")
-    }
+    override val players: Collection<Player> =
+        entities.filterIsInstance<Player>()
 
-    override fun getEntities(vararg types: EntityType): MutableCollection<Entity> {
-        TODO("Not yet implemented")
+    override fun entities(vararg types: EntityType): Collection<Entity> =
+        entities.filter { types.contains(it.entityType) }
+
+    override fun getData() = _data
+
+    override fun setData(data: Data?) {
+        _data = data
     }
 
 }

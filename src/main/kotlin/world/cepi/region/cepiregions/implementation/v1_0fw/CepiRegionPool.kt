@@ -4,29 +4,19 @@ import world.cepi.region.Region
 import world.cepi.region.RegionPool
 import java.util.*
 
-class CepiRegionPool(private val name: String) : RegionPool {
+class CepiRegionPool(override val name: String) : RegionPool {
 
-    val regions = ArrayList<CepiRegion>()
+    override val regions = ArrayList<CepiRegion>()
 
-    override fun getName(): String {
-        return name
-    }
+    override fun contains(region: Region) =
+        regions.contains(region)
 
-    override fun getRegions(): Collection<CepiRegion> {
-        return regions
-    }
+    override val size
+        get() = regions.size
 
-    override fun contains(region: Region): Boolean {
-        return regions.contains(region)
-    }
-
-    override fun size(): Int {
-        return regions.size
-    }
-
-    override fun getRegion(name: String): CepiRegion? {
+    override operator fun get(name: String): CepiRegion? {
         for (region in regions) {
-            if (region.getName() == name) return region
+            if (region.name == name) return region
         }
         return null
     }
@@ -37,8 +27,9 @@ class CepiRegionPool(private val name: String) : RegionPool {
 
     override fun remove(region: Region) {
         if (!contains(region))
-            throw IllegalStateException("attempted to remove non-member region '${region.getName()}' from pool '$name'")
-        // TODO: remove
+            throw IllegalStateException("attempted to remove non-member region '${region.name}' from pool '$name'")
+
+        regions.remove(region)
     }
 
 }

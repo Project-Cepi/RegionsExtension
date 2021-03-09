@@ -1,15 +1,11 @@
-package world.cepi.region;
+package world.cepi.region
 
 import net.minestom.server.data.DataContainer
 import net.minestom.server.entity.Entity
 import net.minestom.server.entity.EntityType
 import net.minestom.server.entity.Player
-import net.minestom.server.instance.Chunk
 import net.minestom.server.instance.Instance
-import net.minestom.server.instance.block.Block
 import net.minestom.server.utils.BlockPosition
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a 3-dimensional non-uniform region.
@@ -75,28 +71,28 @@ interface Region : DataContainer {
      *
      * @param pos1 The first corner of the selection
      * @param pos2 The second corner of the selection
-     * @param world The [Instance] where the selection is supposed to be in.
+     * @param instance The [Instance] where the selection is supposed to be in.
      *
      * @return The amount of blocks that were added in total. This can be less than the
      * actual selection, if part of the selected area was already in the region.
      *
      * @since RegionAPI 1.0
      */
-    fun addBlocks(pos1: BlockPosition, pos2: BlockPosition, world: Instance): Int
+    fun addBlocks(pos1: BlockPosition, pos2: BlockPosition, instance: Instance): Int
 
     /**
      * Removes the given selection from this region
      *
      * @param pos1 The first corner of the selection
      * @param pos2 The second corner of the selection
-     * @param world The [Instance] where the selection is supposed to be in.
+     * @param instance The [Instance] where the selection is supposed to be in.
      *
      * @return The amount of blocks that were removed in total. This can be less than the
      * actual selection, if the selected area was not entirely inside the region.
      *
      * @since RegionAPI 1.0
      */
-    fun removeBlocks(pos1: BlockPosition, pos2: BlockPosition, world: Instance): Int
+    fun removeBlocks(pos1: BlockPosition, pos2: BlockPosition, instance: Instance): Int
 
     /**
      * Creates an iterator that iterates through the block
@@ -118,7 +114,7 @@ interface Region : DataContainer {
      *
      * @since RegionAPI 1.0
      */
-    val players: MutableCollection<Player>
+    val players: Collection<Player>
 
     /**
      * A collection of all the entities that are
@@ -126,7 +122,7 @@ interface Region : DataContainer {
      *
      * @since RegionAPI 1.0
      */
-    val entities: MutableCollection<Entity>
+    val entities: Collection<Entity>
 
     /**
      * Creates a collection of all the entities which type
@@ -139,7 +135,7 @@ interface Region : DataContainer {
      *
      * @since RegionAPI 1.0
      */
-    fun entities(vararg types: EntityType): MutableCollection<Entity> =
+    fun entities(vararg types: EntityType): Collection<Entity> =
         entities.filter { types.contains(it.entityType) }.toMutableList()
 
 }

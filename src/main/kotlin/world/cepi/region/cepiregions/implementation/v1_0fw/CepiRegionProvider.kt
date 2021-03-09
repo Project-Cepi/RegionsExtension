@@ -6,23 +6,15 @@ import java.util.*
 
 class CepiRegionProvider : RegionProvider {
 
-    val pools = ArrayList<CepiRegionPool>()
+    override val pools = ArrayList<CepiRegionPool>()
 
-    override fun getVersion(): String {
-        return "1.0"
-    }
+    override val version = "1.0"
 
-    override fun getImplementationName(): String {
-        return "CepiRegions"
-    }
+    override val implementationName = "CepiRegions"
 
-    override fun getPools(): Collection<CepiRegionPool> {
-        return pools
-    }
-
-    override fun getPool(name: String): CepiRegionPool? {
+    override operator fun get(name: String): CepiRegionPool? {
         for (pool in pools) {
-            if (pool.getName() == name) return pool
+            if (pool.name == name) return pool
         }
         return null
     }
@@ -32,9 +24,11 @@ class CepiRegionProvider : RegionProvider {
     }
 
     override fun removePool(pool: RegionPool) {
-        if (!getPools().contains(pool))
-            throw IllegalStateException("region pool ${pool.getName()} is not registered in ${getImplementationName()}")
-        // TODO: Remove
+        if (!pools.contains(pool))
+            throw IllegalStateException("region pool ${pool.name} is not registered in $implementationName")
+
+        pools.remove(pool)
+
     }
 
 }

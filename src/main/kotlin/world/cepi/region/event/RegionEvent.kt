@@ -14,6 +14,6 @@ interface RegionEvent {
      *
      * @since RegionAPI 1.0
      */
-    fun getRegion(): Region
+    val region: Region
 
 }

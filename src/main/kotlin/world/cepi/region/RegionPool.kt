@@ -18,17 +18,15 @@ interface RegionPool {
      *
      * @since RegionAPI 1.0
      */
-    fun getName(): String
+    val name: String
 
     /**
-     * Gets an unmodifiable collection representation of all the
+     * An unmodifiable collection representation of all the
      * [Region]s contained inside this pool.
-     *
-     * @return A collection of regions inside this pool
      *
      * @since RegionAPI 1.0
      */
-    fun getRegions(): Collection<Region>
+    val regions: Collection<Region>
 
     /**
      * Checks if a given [Region] resides inside this
@@ -41,14 +39,14 @@ interface RegionPool {
      *
      * @since RegionAPI 1.0
      */
-    fun contains(region: Region): Boolean
+    operator fun contains(region: Region): Boolean
 
     /**
-     * @return The amount of [Region]s inside this pool.
+     * The amount of [Region]s inside this pool.
      *
      * @since RegionAPI 1.0
      */
-    fun size(): Int
+    val size: Int
 
     /**
      * Gets the [Region] inside this pool with the given name.
@@ -60,7 +58,7 @@ interface RegionPool {
      *
      * @since RegionAPI 1.0
      */
-    fun getRegion(name: String): Region?
+    operator fun get(name: String): Region?
 
     /**
      * Creates a new [Region] inside this region pool.

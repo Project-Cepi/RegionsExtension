@@ -78,7 +78,7 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
                     + "\n  /$commandName deletepool <pool name>"
                     + "\n   Deletes a regionpool."
 
-                +  "\nImplementation: ${provider.getImplementationName()} RegionAPI: ${provider.getVersion()}"
+                +  "\nImplementation: ${provider.implementationName} RegionAPI: ${provider.version}"
             )
             return true
         }
@@ -89,18 +89,18 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
                 return true
             }
 
-            val pool = provider.getPool(args[1])
+            val pool = provider[args[1]]
 
             if (pool == null) {
                 sender.sendMessage(
                     "${ChatColor.RED}Region pool doesn't exist in implementation " +
-                            "${provider.getImplementationName()}: ${args[1]}"
+                            "${provider.implementationName}: ${args[1]}"
                 )
                 return true
             }
 
-            if (pool.getRegion(args[2]) != null) {
-                sender.sendMessage("${ChatColor.RED}Region already exists in pool ${pool.getName()}: ${args[1]}")
+            if (pool[args[2]] != null) {
+                sender.sendMessage("${ChatColor.RED}Region already exists in pool ${pool.name}: ${args[1]}")
                 return true
             }
 
@@ -110,12 +110,12 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
                 region = pool.createRegion(args[2])
             } catch (e: Exception) {
                 sender.sendMessage(
-                    "${ChatColor.RED}Error while attempting to create region in pool ${pool.getName()}: ${e.message}"
+                    "${ChatColor.RED}Error while attempting to create region in pool ${pool.name}: ${e.message}"
                 )
                 return true
             }
 
-            sender.sendMessage("Region created in pool ${pool.getName()}: ${region.getName()}")
+            sender.sendMessage("Region created in pool ${pool.name}: ${region.name}")
             return true
         }
         else if (args[0] == "delete") {
@@ -124,20 +124,20 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
                 return true
             }
 
-            val pool = provider.getPool(args[1])
+            val pool = provider[args[1]]
 
             if (pool == null) {
                 sender.sendMessage(
                     "${ChatColor.RED}Region pool doesn't exist in implementation " +
-                        "${provider.getImplementationName()}: ${args[1]}"
+                        "${provider.implementationName}: ${args[1]}"
                 )
                 return true
             }
 
-            val region = pool.getRegion(args[2])
+            val region = pool[args[2]]
 
             if (region == null) {
-                sender.sendMessage("${ChatColor.RED}Region doesn't exist in pool ${pool.getName()}: ${args[2]}")
+                sender.sendMessage("${ChatColor.RED}Region doesn't exist in pool ${pool.name}: ${args[2]}")
                 return true
             }
 
@@ -145,12 +145,12 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
                 pool.remove(region)
             } catch (e: Exception) {
                 sender.sendMessage(
-                    "${ChatColor.RED}Error while attempting to delete region in pool ${pool.getName()}: ${e.message}"
+                    "${ChatColor.RED}Error while attempting to delete region in pool ${pool.name}: ${e.message}"
                 )
                 return true
             }
 
-            sender.sendMessage("Region deleted from pool ${pool.getName()}: ${region.getName()}")
+            sender.sendMessage("Region deleted from pool ${pool.name}: ${region.name}")
             return true
         }
         else if (args[0] == "pos1" || args[1] == "pos2") {
@@ -231,20 +231,20 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
                 return true
             }
 
-            val pool = provider.getPool(args[1])
+            val pool = provider[args[1]]
 
             if (pool == null) {
                 sender.sendMessage(
                     "${ChatColor.RED}Region pool doesn't exist in implementation " +
-                            "${provider.getImplementationName()}: ${args[1]}"
+                            "${provider.implementationName}: ${args[1]}"
                 )
                 return true
             }
 
-            val region = pool.getRegion(args[2])
+            val region = pool[args[2]]
 
             if (region == null) {
-                sender.sendMessage("${ChatColor.RED}Region doesn't exist in pool ${pool.getName()}: ${args[2]}")
+                sender.sendMessage("${ChatColor.RED}Region doesn't exist in pool ${pool.name}: ${args[2]}")
                 return true
             }
 
@@ -282,54 +282,54 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
             if (args[0] == "addblocks") {
                 val result = region.addBlocks(selection.pos1!!, selection.pos2!!, world)
                 sender.sendMessage("$result block${if (result != 1) "s" else ""} " +
-                        "were added to region ${region.getName()} in pool ${pool.getName()}.")
+                        "were added to region ${region.name} in pool ${pool.name}.")
             }
             else if (args[0] == "removeblocks") {
                 val result = region.removeBlocks(selection.pos1!!, selection.pos2!!, world)
                 sender.sendMessage("$result block${if (result != 1) "s" else ""} " +
-                        "were removed from region ${region.getName()} in pool ${pool.getName()}.")
+                        "were removed from region ${region.name} in pool ${pool.name}.")
             }
         }
         else if (args[0] == "list") {
             if (args.size == 1) {
-                val pools = provider.getPools()
+                val pools = provider.pools
 
                 var list = ""
 
                 for (pool in pools) {
-                    list = list + ", " + pool.getName()
+                    list = list + ", " + pool.name
                 }
 
                 list = list.replaceFirst(", ", "")
 
                 sender.sendMessage(
                     "Total of ${pools.size} region pool${if (pools.size == 1) "s" else ""} in implementation " +
-                            "${provider.getImplementationName()}: $list"
+                            "${provider.implementationName}: $list"
                 )
                 return true
             }
             else if (args.size == 2) {
-                val pool = provider.getPool(args[1])
+                val pool = provider[args[1]]
 
                 if (pool == null) {
                     sender.sendMessage(
                         "${ChatColor.RED}Region pool doesn't exist in implementation " +
-                                "${provider.getImplementationName()}: ${args[1]}"
+                                "${provider.implementationName}: ${args[1]}"
                     )
                     return true
                 }
 
                 var list = ""
 
-                for (region in pool.getRegions()) {
-                    list = list + ", " + pool.getName()
+                for (region in pool.regions) {
+                    list = list + ", " + pool.name
                 }
 
                 list = list.replaceFirst(", ", "")
 
                 sender.sendMessage(
-                    "Total of ${pool.size()} region${if (pool.size() == 1) "s" else ""} in pool " +
-                            "${pool.getName()}: $list"
+                    "Total of ${pool.size} region${if (pool.size == 1) "s" else ""} in pool " +
+                            "${pool.name}: $list"
                 )
                 return true
             }
@@ -349,20 +349,20 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
                 return true
             }
 
-            val pool = provider.getPool(args[1])
+            val pool = provider[args[1]]
 
             if (pool == null) {
                 sender.sendMessage(
                     "${ChatColor.RED}Region pool doesn't exist in implementation " +
-                            "${provider.getImplementationName()}: ${args[1]}"
+                            "${provider.implementationName}: ${args[1]}"
                 )
                 return true
             }
 
-            val region = pool.getRegion(args[2])
+            val region = pool[args[2]]
 
             if (region == null) {
-                sender.sendMessage("${ChatColor.RED}Region doesn't exist in pool ${pool.getName()}: ${args[2]}")
+                sender.sendMessage("${ChatColor.RED}Region doesn't exist in pool ${pool.name}: ${args[2]}")
                 return true
             }
 
@@ -412,10 +412,10 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
                 return true
             }
 
-            if (provider.getPool(args[1]) != null) {
+            if (provider[args[1]] != null) {
                 sender.sendMessage(
                     "${ChatColor.RED}Region pool already exists in implementation " +
-                            "${provider.getImplementationName()}: ${args[1]}"
+                            "${provider.implementationName}: ${args[1]}"
                 )
                 return true
             }
@@ -427,14 +427,14 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
             } catch (e: Exception) {
                 sender.sendMessage(
                     "${ChatColor.RED}Error while attempting to create region pool in implementation " +
-                            "${provider.getImplementationName()}: ${e.message}"
+                            "${provider.implementationName}: ${e.message}"
                 )
                 return true
             }
 
             sender.sendMessage(
                 "Region pool created in implementation " +
-                    "${provider.getImplementationName()}: ${pool.getName()}"
+                    "${provider.implementationName}: ${pool.name}"
             )
             return true
         }
@@ -444,12 +444,12 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
                 return true
             }
 
-            val pool = provider.getPool(args[1])
+            val pool = provider[args[1]]
 
             if (pool == null) {
                 sender.sendMessage(
                     "${ChatColor.RED}Region pool doesn't exist in implementation " +
-                            "${provider.getImplementationName()}: ${args[1]}"
+                            "${provider.implementationName}: ${args[1]}"
                 )
                 return true
             }
@@ -459,14 +459,14 @@ class RegionCommand(private val provider: RegionProvider) : CommandProcessor {
             } catch (e: Exception) {
                 sender.sendMessage(
                     "${ChatColor.RED}Error while attempting to delete region pool from implementation " +
-                            "${provider.getImplementationName()}: ${e.message}"
+                            "${provider.implementationName}: ${e.message}"
                 )
                 return true
             }
 
             sender.sendMessage(
                 "Region pool deleted from implementation " +
-                        "${provider.getImplementationName()}: ${pool.getName()}"
+                        "${provider.implementationName}: ${pool.name}"
             )
             return true
         }

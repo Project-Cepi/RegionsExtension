@@ -20,42 +20,42 @@ import org.jetbrains.annotations.Nullable;
 interface Region : DataContainer {
 
     /**
-     * @return The unique name of this region.
+     * The unique name of this region.
      *
      * @since RegionAPI 1.0
      */
-    fun getName(): String
+    val name: String
 
     /**
-     * @return The [RegionPool] in which this region
+     * The [RegionPool] in which this region
      * resided in. Or null, if this region has been removed.
      *
      * @since RegionAPI 1.0
      */
-    fun getPool(): RegionPool
+    val pool: RegionPool
 
     /**
-     * @return An unmodifiable collection of worlds (Minestom [Instance]s),
+     * An unmodifiable collection of worlds (Minestom [Instance]s),
      * that contain at least some part of this region.
      *
      * @since RegionAPI 1.0
      */
-    fun getWorlds(): Collection<Instance>
+    val worlds: Collection<Instance>
 
     /**
-     * @return True, if this region contains at least one block.
+     * True, if this region contains at least one block.
      * (Has any size.) False otherwise.
      *
      * @since RegionAPI 1.0
      */
-    fun isDefined(): Boolean
+    val defined: Boolean
 
     /**
-     * @return The volume of this region in blocks.
+     * The volume of this region in blocks.
      *
      * @since RegionAPI 1.0
      */
-    fun getVolume(): Int
+    val volume: Int
 
     /**
      * Checks if the given block position is inside of this
@@ -113,24 +113,20 @@ interface Region : DataContainer {
     fun iterateChunk(chunkX: Int, chunkZ: Int, world: Instance) : Iterator<BlockPosition>
 
     /**
-     * Creates a collection of all the players that are
+     * A collection of all the players that are
      * currently inside this region.
-     *
-     * @return Collection of players inside this region
      *
      * @since RegionAPI 1.0
      */
-    fun getPlayers(): MutableCollection<Player>
+    val players: MutableCollection<Player>
 
     /**
-     * Creates a collection of all the entities that are
+     * A collection of all the entities that are
      * currently inside this region.
-     *
-     * @return Collection of entities inside this region
      *
      * @since RegionAPI 1.0
      */
-    fun getEntities(): MutableCollection<Entity>
+    val entities: MutableCollection<Entity>
 
     /**
      * Creates a collection of all the entities which type
@@ -143,6 +139,7 @@ interface Region : DataContainer {
      *
      * @since RegionAPI 1.0
      */
-    fun getEntities(vararg types: EntityType): MutableCollection<Entity>
+    fun entities(vararg types: EntityType): MutableCollection<Entity> =
+        entities.filter { types.contains(it.entityType) }.toMutableList()
 
 }

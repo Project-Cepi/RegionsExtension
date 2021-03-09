@@ -18,19 +18,19 @@ interface RegionProvider {
      *
      * @since RegionAPI 1.0
      */
-    fun getVersion(): String
+    val version: String
 
     /**
-     * @return The name of this Regions API
+     * The name of this Regions API
      * implementation.
      */
-    fun getImplementationName(): String
+    val implementationName: String
 
     /**
      * @return An unmodifiable collection representation
      * of all the [RegionPool]s managed by this provider.
      */
-    fun getPools(): Collection<RegionPool>
+    val pools: Collection<RegionPool>
 
     /**
      * Gets the [RegionPool] with the specified name,
@@ -40,7 +40,7 @@ interface RegionProvider {
      *
      * @return The pool, with the given name, or null.
      */
-    fun getPool(name: String): RegionPool?
+    operator fun get(name: String): RegionPool?
 
     /**
      * Creates a new [RegionPool], with the given name.

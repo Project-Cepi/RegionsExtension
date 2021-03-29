@@ -6,52 +6,44 @@ import net.minestom.server.entity.EntityType
 import net.minestom.server.entity.Player
 import net.minestom.server.instance.Instance
 import net.minestom.server.utils.BlockPosition
+import world.cepi.region.Selection
 
 /**
  * Represents a 3-dimensional non-uniform region.
  * (Though it can be uniform, if you define it like so.)
- *
- * @since RegionAPI 1.0
  */
-interface Region : DataContainer {
-
+class Region(
     /**
      * The unique name of this region.
-     *
-     * @since RegionAPI 1.0
      */
-    val name: String
-
+    val name: String,
     /**
      * The [RegionPool] in which this region
      * resided in. Or null, if this region has been removed.
-     *
-     * @since RegionAPI 1.0
      */
-    val pool: RegionPool
-
+    val pool: RegionPool,
     /**
      * An unmodifiable collection of worlds (Minestom [Instance]s),
      * that contain at least some part of this region.
-     *
-     * @since RegionAPI 1.0
      */
-    val instances: Collection<Instance>
+    val instance: Instance
+) : DataContainer {
+
+    val selections: List<Selection> = listOf()
 
     /**
      * True, if this region contains at least one block.
      * (Has any size.) False otherwise.
-     *
-     * @since RegionAPI 1.0
      */
     val defined: Boolean
+        get() = selections.isEmpty()
 
     /**
      * The volume of this region in blocks.
      *
-     * @since RegionAPI 1.0
+     * TODO implement it
      */
-    val volume: Int
+    val volume: Int = 0
 
     /**
      * Checks if the given block position is inside of this
@@ -61,38 +53,31 @@ interface Region : DataContainer {
      * @param world, the Instance
      *
      * @return True, only if the block is inside this region.
-     *
-     * @since RegionAPI 1.0
      */
     fun isInside(pos: BlockPosition, world: Instance): Boolean
+        = selections.any { it.isInside(instance, pos) }
 
     /**
      * Adds the given selection to this region.
      *
      * @param pos1 The first corner of the selection
      * @param pos2 The second corner of the selection
-     * @param instance The [Instance] where the selection is supposed to be in.
      *
      * @return The amount of blocks that were added in total. This can be less than the
      * actual selection, if part of the selected area was already in the region.
-     *
-     * @since RegionAPI 1.0
      */
-    fun addBlocks(pos1: BlockPosition, pos2: BlockPosition, instance: Instance): Int
+    fun addBlocks(pos1: BlockPosition, pos2: BlockPosition): Int
 
     /**
      * Removes the given selection from this region
      *
      * @param pos1 The first corner of the selection
      * @param pos2 The second corner of the selection
-     * @param instance The [Instance] where the selection is supposed to be in.
      *
      * @return The amount of blocks that were removed in total. This can be less than the
      * actual selection, if the selected area was not entirely inside the region.
-     *
-     * @since RegionAPI 1.0
      */
-    fun removeBlocks(pos1: BlockPosition, pos2: BlockPosition, instance: Instance): Int
+    fun removeBlocks(pos1: BlockPosition, pos2: BlockPosition): Int
 
     /**
      * Creates an iterator that iterates through the block
@@ -100,29 +85,24 @@ interface Region : DataContainer {
      *
      * @param chunkX The chunk x-coordinate
      * @param chunkZ The chunk z-coordinate
-     * @param world The [Instance] where the chunk resides.
      *
      * @return Iterator for blocks inside this region in the chunk.
-     *
-     * @since RegionAPI 1.0
      */
-    fun iterateChunk(chunkX: Int, chunkZ: Int, world: Instance) : Iterator<BlockPosition>
+    fun iterateChunk(chunkX: Int, chunkZ: Int) : Iterator<BlockPosition>
 
     /**
      * A collection of all the players that are
      * currently inside this region.
-     *
-     * @since RegionAPI 1.0
      */
     val players: Set<Player>
+        get() = entities.filterIsInstance<Player>().toSet()
 
     /**
      * A collection of all the entities that are
      * currently inside this region.
-     *
-     * @since RegionAPI 1.0
      */
     val entities: Set<Entity>
+        get() = selections.map { it.findInside(instance) }.flatten().toSet()
 
     /**
      * Creates a collection of all the entities which type
@@ -132,8 +112,6 @@ interface Region : DataContainer {
      * @param types The given entity types. Null not allowed as an member.
      *
      * @return Collection of entities inside this region with a given type
-     *
-     * @since RegionAPI 1.0
      */
     fun entities(vararg types: EntityType): Collection<Entity> =
         entities.filter { types.contains(it.entityType) }.toMutableList()

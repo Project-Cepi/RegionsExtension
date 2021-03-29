@@ -29,7 +29,10 @@ class Region(
     val instance: Instance
 ) : DataContainer {
 
-    val selections: List<Selection> = listOf()
+    /**
+     * List of all selections
+     */
+    val selections: List<Selection> = mutableListOf()
 
     /**
      * True, if this region contains at least one block.
@@ -60,24 +63,26 @@ class Region(
     /**
      * Adds the given selection to this region.
      *
-     * @param pos1 The first corner of the selection
-     * @param pos2 The second corner of the selection
+     * @param selection The selection to add
      *
      * @return The amount of blocks that were added in total. This can be less than the
      * actual selection, if part of the selected area was already in the region.
      */
-    fun addBlocks(pos1: BlockPosition, pos2: BlockPosition): Int
+    fun addBlocks(selection: Selection): Int {
+        selections as MutableList
+
+        selections.add(selection)
+    }
 
     /**
      * Removes the given selection from this region
      *
-     * @param pos1 The first corner of the selection
-     * @param pos2 The second corner of the selection
+     * @param selection The selection to add
      *
      * @return The amount of blocks that were removed in total. This can be less than the
      * actual selection, if the selected area was not entirely inside the region.
      */
-    fun removeBlocks(pos1: BlockPosition, pos2: BlockPosition): Int
+    fun removeBlocks(selection: Selection): Int
 
     /**
      * Creates an iterator that iterates through the block

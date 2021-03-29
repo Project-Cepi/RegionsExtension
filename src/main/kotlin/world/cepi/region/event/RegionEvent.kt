@@ -1,6 +1,6 @@
 package world.cepi.region.event
 
-import world.cepi.region.Region
+import world.cepi.region.api.Region
 
 /**
  * Represents a [Region] related event.

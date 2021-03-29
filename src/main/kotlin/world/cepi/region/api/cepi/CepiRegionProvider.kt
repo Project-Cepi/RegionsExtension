@@ -1,14 +1,12 @@
-package world.cepi.region.cepiregions.implementation.v1_0fw
+package world.cepi.region.api.cepi
 
-import world.cepi.region.RegionPool
-import world.cepi.region.RegionProvider
+import world.cepi.region.api.RegionPool
+import world.cepi.region.api.RegionProvider
 import java.util.*
 
 class CepiRegionProvider : RegionProvider {
 
     override val pools = ArrayList<CepiRegionPool>()
-
-    override val version = "1.0"
 
     override val implementationName = "CepiRegions"
 

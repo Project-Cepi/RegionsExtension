@@ -1,4 +1,4 @@
-package world.cepi.region
+package world.cepi.region.api
 
 /**
  * Represents a collection of [Region]s. Regions in different pools

@@ -1,4 +1,4 @@
-package world.cepi.region.cepiregions.implementation.v1_0fw
+package world.cepi.region.api.cepi
 
 import net.minestom.server.data.Data
 import net.minestom.server.entity.Entity
@@ -6,8 +6,8 @@ import net.minestom.server.entity.EntityType
 import net.minestom.server.entity.Player
 import net.minestom.server.instance.Instance
 import net.minestom.server.utils.BlockPosition
-import world.cepi.region.Region
 import world.cepi.region.Selection
+import world.cepi.region.api.Region
 
 data class CepiRegion(override val name: String, override val pool: CepiRegionPool, val instance: Instance) : Region {
 

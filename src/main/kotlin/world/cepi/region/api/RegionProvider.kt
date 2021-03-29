@@ -1,4 +1,4 @@
-package world.cepi.region
+package world.cepi.region.api
 
 /**
  * Represents a RegionAPI implementation.
@@ -8,14 +8,6 @@ package world.cepi.region
  * @since RegionAPI 1.0
  */
 interface RegionProvider {
-
-    /**
-     * The RegionAPI version this implementation was
-     * made for.
-     *
-     * @since RegionAPI 1.0
-     */
-    val version: String
 
     /**
      * The name of this Regions API

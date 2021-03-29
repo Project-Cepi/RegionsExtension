@@ -1,4 +1,4 @@
-package world.cepi.region
+package world.cepi.region.api
 
 import net.minestom.server.data.DataContainer
 import net.minestom.server.entity.Entity

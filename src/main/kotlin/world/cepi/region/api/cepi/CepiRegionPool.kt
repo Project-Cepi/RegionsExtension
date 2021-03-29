@@ -1,7 +1,7 @@
-package world.cepi.region.cepiregions.implementation.v1_0fw
+package world.cepi.region.api.cepi
 
-import world.cepi.region.Region
-import world.cepi.region.RegionPool
+import world.cepi.region.api.Region
+import world.cepi.region.api.RegionPool
 import java.util.*
 
 data class CepiRegionPool(override val name: String) : RegionPool {

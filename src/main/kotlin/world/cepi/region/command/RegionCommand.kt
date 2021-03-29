@@ -9,7 +9,7 @@ import net.minestom.server.event.player.PlayerDisconnectEvent
 import world.cepi.kstom.command.addSyntax
 import world.cepi.kstom.command.arguments.asSubcommand
 import world.cepi.kstom.command.setArgumentCallback
-import world.cepi.region.RegionProvider
+import world.cepi.region.api.RegionProvider
 import world.cepi.region.Selection
 import java.util.*
 

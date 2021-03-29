@@ -4,7 +4,7 @@ import net.minestom.server.entity.Entity
 import net.minestom.server.instance.Instance
 import net.minestom.server.utils.BlockPosition
 
-class Selection(var pos1: BlockPosition, var pos2: BlockPosition) {
+data class Selection(var pos1: BlockPosition, var pos2: BlockPosition) {
 
     fun isInside(instance: Instance, position: BlockPosition): Boolean {
         return (pos1.x..pos2.x).contains(position.x) ||

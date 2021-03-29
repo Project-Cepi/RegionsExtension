@@ -20,7 +20,11 @@ class CepiRegionProvider : RegionProvider {
     }
 
     override fun createPool(name: String): CepiRegionPool {
-        TODO("Not yet implemented")
+        val pool = CepiRegionPool(name)
+
+        pools.add(pool)
+
+        return pool
     }
 
     override fun removePool(pool: RegionPool) {

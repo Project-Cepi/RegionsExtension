@@ -9,7 +9,7 @@ import net.minestom.server.utils.BlockPosition
 import world.cepi.region.Region
 import world.cepi.region.Selection
 
-class CepiRegion(override val name: String, override val pool: CepiRegionPool, val instance: Instance) : Region {
+data class CepiRegion(override val name: String, override val pool: CepiRegionPool, val instance: Instance) : Region {
 
     private var _data: Data? = null
 

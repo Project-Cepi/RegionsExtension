@@ -6,9 +6,8 @@ import net.minestom.server.command.CommandSender
 import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.event.player.PlayerDisconnectEvent
-import net.minestom.server.utils.BlockPosition
-import world.cepi.kstom.command.arguments.asSubcommand
 import world.cepi.kstom.command.addSyntax
+import world.cepi.kstom.command.arguments.asSubcommand
 import world.cepi.kstom.command.setArgumentCallback
 import world.cepi.region.RegionProvider
 import world.cepi.region.Selection

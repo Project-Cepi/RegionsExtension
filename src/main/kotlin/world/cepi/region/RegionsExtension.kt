@@ -1,7 +1,6 @@
-package world.cepi.region.cepiregions
+package world.cepi.region
 
 import net.minestom.server.extensions.Extension
-import world.cepi.region.RegionProvider
 import world.cepi.region.cepiregions.implementation.v1_0fw.CepiRegionProvider
 
 class RegionsExtension : Extension() {

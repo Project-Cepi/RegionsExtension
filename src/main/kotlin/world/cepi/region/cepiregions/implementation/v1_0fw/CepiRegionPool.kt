@@ -4,7 +4,7 @@ import world.cepi.region.Region
 import world.cepi.region.RegionPool
 import java.util.*
 
-class CepiRegionPool(override val name: String) : RegionPool {
+data class CepiRegionPool(override val name: String) : RegionPool {
 
     override val regions = ArrayList<CepiRegion>()
 

@@ -7,19 +7,9 @@ package world.cepi.region.api
  *
  * @since RegionAPI 1.0
  */
-interface RegionProvider {
+object RegionProvider {
 
-    /**
-     * The name of this Regions API
-     * implementation.
-     */
-    val implementationName: String
-
-    /**
-     * @return An unmodifiable collection representation
-     * of all the [RegionPool]s managed by this provider.
-     */
-    val pools: Collection<RegionPool>
+    val pools: Set<RegionPool> = mutableSetOf()
 
     /**
      * Gets the [RegionPool] with the specified name,
@@ -29,31 +19,11 @@ interface RegionProvider {
      *
      * @return The pool, with the given name, or null.
      */
-    operator fun get(name: String): RegionPool?
-
-    /**
-     * Creates a new [RegionPool], with the given name.
-     *
-     * @param name The given name
-     *
-     * @return The new pool.
-     *
-     * @throws IllegalStateException If a pool with the same
-     * name already exists.
-     */
-    fun createPool(name: String): RegionPool
-
-    /**
-     * Removes the given [RegionPool].
-     *
-     * <p> Calling methods of a removed [RegionPool] will
-     * cause an exception to be thrown.
-     *
-     * @param pool The given pool
-     *
-     * @throws IllegalStateException If the pool is already
-     * removed.
-     */
-    fun removePool(pool: RegionPool)
+    operator fun get(name: String): RegionPool? {
+        for (pool in pools) {
+            if (pool.name == name) return pool
+        }
+        return null
+    }
 
 }

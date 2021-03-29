@@ -114,7 +114,7 @@ interface Region : DataContainer {
      *
      * @since RegionAPI 1.0
      */
-    val players: Collection<Player>
+    val players: Set<Player>
 
     /**
      * A collection of all the entities that are
@@ -122,7 +122,7 @@ interface Region : DataContainer {
      *
      * @since RegionAPI 1.0
      */
-    val entities: Collection<Entity>
+    val entities: Set<Entity>
 
     /**
      * Creates a collection of all the entities which type

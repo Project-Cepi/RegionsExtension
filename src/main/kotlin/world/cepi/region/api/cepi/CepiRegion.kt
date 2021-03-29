@@ -38,11 +38,11 @@ data class CepiRegion(override val name: String, override val pool: CepiRegionPo
         TODO("Not yet implemented")
     }
 
-    override val entities: Collection<Entity> =
-        selections.map { it.findInside(instance) }.flatten()
+    override val entities: Set<Entity> =
+        selections.map { it.findInside(instance) }.flatten().toSet()
 
-    override val players: Collection<Player> =
-        entities.filterIsInstance<Player>()
+    override val players: Set<Player> =
+        entities.filterIsInstance<Player>().toSet()
 
     override fun entities(vararg types: EntityType): Collection<Entity> =
         entities.filter { types.contains(it.entityType) }

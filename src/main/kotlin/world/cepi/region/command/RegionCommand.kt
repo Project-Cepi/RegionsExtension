@@ -41,7 +41,7 @@ class RegionCommand(val provider: RegionProvider) : Command("region") {
         val poolName = ArgumentType.DynamicWord("poolName").fromRestrictions { provider.pools.any { pool -> pool.name == it } }
 
         setArgumentCallback(poolName) { sender, exception ->
-            sender.sendMessage("${ChatColor.RED}Region pool doesn't exist in implementation ${provider.implementationName}: ${exception.input}")
+            sender.sendMessage("${ChatColor.RED}Region pool doesn't exist: ${exception.input}")
         }
 
         val regionName = ArgumentType.DynamicWord("regionName").fromRestrictions { input -> provider.pools.map { it.regions }.flatten().any { it.name == input } }

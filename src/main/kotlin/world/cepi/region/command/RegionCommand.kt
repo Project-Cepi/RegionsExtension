@@ -76,8 +76,6 @@ class RegionCommand(val provider: RegionProvider) : Command("region") {
                     + "\n   Creates a new regionpool."
                     + "\n  /$name deletepool <pool name>"
                     + "\n   Deletes a regionpool."
-
-                    +  "\nImplementation: ${provider.implementationName} RegionAPI: ${provider.version}"
             )
         }
 

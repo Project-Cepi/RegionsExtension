@@ -8,7 +8,6 @@ import net.minestom.server.command.CommandSender
 import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.event.player.PlayerDisconnectEvent
-import org.apache.logging.log4j.core.tools.picocli.CommandLine
 import world.cepi.kepi.messages.sendFormattedMessage
 import world.cepi.kepi.subcommands.Help
 import world.cepi.kstom.command.addSyntax
@@ -16,6 +15,7 @@ import world.cepi.kstom.command.arguments.asSubcommand
 import world.cepi.kstom.command.setArgumentCallback
 import world.cepi.region.api.RegionProvider
 import world.cepi.region.Selection
+import world.cepi.region.api.Region
 import java.util.*
 
 object RegionCommand : Command("region") {
@@ -80,11 +80,29 @@ object RegionCommand : Command("region") {
         ))
 
         addSyntax(create, poolName, newRegionName) { sender, args ->
-            val poolObect = RegionProvider[args.get(poolName)]
+            val poolObject = RegionProvider[args.get(poolName)]!!
+
+            val region = poolObject.createRegion(args.get(newRegionName))
+
+            sender.sendFormattedMessage(
+                regionCreated,
+                Component.text(poolObject.name),
+                Component.text(region.name)
+            )
         }
 
         addSyntax(delete, poolName, regionName) { sender, args ->
+            val poolObject = RegionProvider[args.get(poolName)]!!
 
+            val region = poolObject[args.get(newRegionName)]!!
+
+            poolObject.remove(region)
+
+            sender.sendFormattedMessage(
+                regionDeleted,
+                Component.text(poolObject.name),
+                Component.text(region.name)
+            )
         }
 
         addSyntax(pos1) { sender ->

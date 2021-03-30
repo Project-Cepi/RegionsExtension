@@ -1,5 +1,7 @@
 package world.cepi.region.api
 
+import net.minestom.server.instance.Instance
+
 
 /**
  * Represents a collection of [Region]s. Regions in different pools
@@ -11,7 +13,12 @@ class RegionPool(
     /**
      * The name of this region pool.
      */
-    val name: String
+    val name: String,
+
+    /**
+     * The instance of this pool
+     */
+    val instance: Instance
 ) {
 
     /**
@@ -59,7 +66,16 @@ class RegionPool(
      * @throws IllegalStateException If the name provided was not unique.
      */
     fun createRegion(name: String): Region {
-        TODO("Not yet implemented")
+        regions as MutableList
+
+        if (regions.any { it.name == name })
+            throw IllegalStateException("attempted to add non-member region '${name}' from pool '${this.name}' but it was still there")
+
+        val region = Region(name, this)
+
+        regions.add(region)
+
+        return region
     }
 
     /**

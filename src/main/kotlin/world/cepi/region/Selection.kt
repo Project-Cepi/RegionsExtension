@@ -48,7 +48,7 @@ data class Selection(
      * @return If any part of the [Selection] intersects with the other [selection]
      */
     fun containsSome(selection: Selection): Boolean {
-
+        return false // TODO
     }
 
     /**

@@ -66,6 +66,8 @@ data class Region(
      */
     fun addBlocks(selection: Selection): Int {
 
+        simplifyWith(selection)
+
         return if (!selections.any { it.containsAll(selection) }) {
 
             selections as MutableList
@@ -99,8 +101,10 @@ data class Region(
      * actual selection, if the selected area was not entirely inside the region.
      */
     fun removeBlocks(selection: Selection): Int {
-        // Remove all selections that
+        // Remove all selections that are in this selection
         simplifyWith(selection)
+
+        return 0 // TODO
     }
 
     /**

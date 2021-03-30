@@ -1,11 +1,14 @@
 package world.cepi.region.command
 
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import net.minestom.server.MinecraftServer
 import net.minestom.server.chat.ChatColor
 import net.minestom.server.command.CommandSender
 import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.event.player.PlayerDisconnectEvent
+import world.cepi.kepi.messages.sendFormattedMessage
 import world.cepi.kstom.command.addSyntax
 import world.cepi.kstom.command.arguments.asSubcommand
 import world.cepi.kstom.command.setArgumentCallback
@@ -41,7 +44,7 @@ class RegionCommand(val provider: RegionProvider) : Command("region") {
         val poolName = ArgumentType.DynamicWord("poolName").fromRestrictions { provider.pools.any { pool -> pool.name == it } }
 
         setArgumentCallback(poolName) { sender, exception ->
-            sender.sendMessage("${ChatColor.RED}Region pool doesn't exist: ${exception.input}")
+            sender.sendFormattedMessage(regionPoolNotExist, Component.text(exception.input, NamedTextColor.BLUE))
         }
 
         val regionName = ArgumentType.DynamicWord("regionName").fromRestrictions { input -> provider.pools.map { it.regions }.flatten().any { it.name == input } }

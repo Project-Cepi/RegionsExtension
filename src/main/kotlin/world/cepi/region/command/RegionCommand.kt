@@ -8,7 +8,9 @@ import net.minestom.server.command.CommandSender
 import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.event.player.PlayerDisconnectEvent
+import org.apache.logging.log4j.core.tools.picocli.CommandLine
 import world.cepi.kepi.messages.sendFormattedMessage
+import world.cepi.kepi.subcommands.Help
 import world.cepi.kstom.command.addSyntax
 import world.cepi.kstom.command.arguments.asSubcommand
 import world.cepi.kstom.command.setArgumentCallback
@@ -16,7 +18,7 @@ import world.cepi.region.api.RegionProvider
 import world.cepi.region.Selection
 import java.util.*
 
-class RegionCommand(val provider: RegionProvider) : Command("region") {
+object RegionCommand : Command("region") {
 
     private val selectedPositions = HashMap<CommandSender, Selection>()
 
@@ -41,46 +43,44 @@ class RegionCommand(val provider: RegionProvider) : Command("region") {
 
         val pool = "pool".asSubcommand()
 
-        val poolName = ArgumentType.DynamicWord("poolName").fromRestrictions { provider.pools.any { pool -> pool.name == it } }
+        val poolName = ArgumentType.DynamicWord("poolName").fromRestrictions { RegionProvider.pools.any { pool -> pool.name == it } }
 
         setArgumentCallback(poolName) { sender, exception ->
             sender.sendFormattedMessage(regionPoolNotExist, Component.text(exception.input, NamedTextColor.BLUE))
         }
 
-        val regionName = ArgumentType.DynamicWord("regionName").fromRestrictions { input -> provider.pools.map { it.regions }.flatten().any { it.name == input } }
+        val regionName = ArgumentType.DynamicWord("regionName").fromRestrictions { input -> RegionProvider.pools.map { it.regions }.flatten().any { it.name == input } }
         val newRegionName = ArgumentType.String("newRegionName")
 
-        // TODO kotlin """
-        setDefaultExecutor { sender, args ->
-            sender.sendMessage("Usage:"
-                    + "\n  /$name create <pool name> <region name>"
-                    + "\n   Creates a new region in a given regionpool."
-                    + "\n  /$name delete <pool name> <region name>"
-                    + "\n   Deletes a region in a given regionpool."
-                    + "\n  /$name pos1 [<coordinates>]"
-                    + "\n   Sets/gets the first position for making a selection."
-                    + "\n  /$name pos2 [<coordinates>]"
-                    + "\n   Sets/gets the second position for making a selection."
-                    + "\n  /$name addblocks <pool name> <region name> [<world uuid>]"
-                    + "\n   Adds the selected blocks to the region in the"
-                    + "\b   given regionpool."
-                    + "\n  /$name removeblocks <pool name> <region name> [<world uuid>]"
-                    + "\n   Removes the selected blocks from the region in"
-                    + "\n   the given regionpool."
-                    + "\n  /$name list [<pool name>]"
-                    + "\n   Lists all the regions in the given regionpool,"
-                    + "\n   or all the pools if argument omitted."
-                    + "\n  /$name show <pool name> <region name>"
-                    + "\n   Visually show the region in the given regionpool."
-                    + "\n  /$name createpool <pool name>"
-                    + "\n   Creates a new regionpool."
-                    + "\n  /$name deletepool <pool name>"
-                    + "\n   Deletes a regionpool."
-            )
-        }
+
+        addSubcommand(Help(
+            Component.text("/$name create <pool name> <region name>"),
+                Component.text(" Creates a new region in a given regionpool."),
+                Component.text("/$name delete <pool name> <region name>"),
+                Component.text(" Deletes a region in a given regionpool."),
+                Component.text("/$name pos1 [<coordinates>]"),
+                Component.text(" Sets/gets the first position for making a selection."),
+                Component.text("/$name pos2 [<coordinates>]"),
+                Component.text(" Sets/gets the second position for making a selection."),
+                Component.text("/$name addblocks <pool name> <region name> [<world uuid>]"),
+                Component.text(" Adds the selected blocks to the region in the given regionpool"),
+                Component.text("/$name removeblocks <pool name> <region name> [<world uuid>]"),
+                Component.text(" Removes the selected blocks from the region in"),
+                Component.text(" the given regionpool."),
+                Component.text("/$name list [<pool name>]"),
+                Component.text(" Lists all the regions in the given regionpool,"),
+                Component.text(" or all the pools if argument omitted."),
+                Component.text("/$name show <pool name> <region name>"),
+                Component.text(" Visually show the region in the given regionpool."),
+                Component.text("/$name createpool <pool name>"),
+                Component.text(" Creates a new regionpool."),
+                Component.text("/$name deletepool <pool name>"),
+                Component.text(" Deletes a regionpool."),
+
+        ))
 
         addSyntax(create, poolName, newRegionName) { sender, args ->
-            val poolObect = provider[args.get(poolName)]
+            val poolObect = RegionProvider[args.get(poolName)]
         }
 
         addSyntax(delete, poolName, regionName) { sender, args ->

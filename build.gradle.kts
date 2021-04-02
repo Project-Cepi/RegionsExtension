@@ -61,7 +61,7 @@ configurations {
 
 tasks {
     named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-        archiveBaseName.set("shop")
+        archiveBaseName.set("region")
         mergeServiceFiles()
         minimize()
 

@@ -1,5 +1,5 @@
 {
-  "entrypoint": "world.cepi.region.ExampleExtension",
-  "name": "ExampleExtension",
-  "version": "1.0.0-EXAMPLE"
+  "entrypoint": "world.cepi.region.RegionsExtension",
+  "name": "RegionExtension",
+  "version": "1.0.0"
 }

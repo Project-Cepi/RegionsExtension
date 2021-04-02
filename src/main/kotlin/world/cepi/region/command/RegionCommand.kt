@@ -130,7 +130,11 @@ object RegionCommand : Command("region") {
         }
 
         addSyntax(list) { sender ->
+            val pools = RegionProvider.pools
 
+            pools.joinToString { it.name }
+
+            sender.sendFormattedMessage(regionPoolsList, Component.text(pools.joinToString { it.name }))
         }
 
         addSyntax(show) { sender ->

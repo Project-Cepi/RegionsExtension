@@ -1,29 +1,31 @@
-package world.cepi.region
+package world.cepi.region.api
+
+import net.minestom.server.instance.Instance
+
 
 /**
  * Represents a collection of [Region]s. Regions in different pools
  * can overlap, but regions inside the same pool cannot.
  *
  * Regions in the same pool also need to have unique names.
- *
- * @since RegionAPI 1.0
  */
-interface RegionPool {
-
+class RegionPool(
     /**
      * The name of this region pool.
-     *
-     * @since RegionAPI 1.0
      */
-    val name: String
+    val name: String,
+
+    /**
+     * The instance of this pool
+     */
+    val instance: Instance
+) {
 
     /**
      * An unmodifiable collection representation of all the
      * [Region]s contained inside this pool.
-     *
-     * @since RegionAPI 1.0
      */
-    val regions: Collection<Region>
+    val regions: List<Region> = mutableListOf()
 
     /**
      * Checks if a given [Region] resides inside this
@@ -33,17 +35,14 @@ interface RegionPool {
      *
      * @return True, if given region is inside this pool.
      * False otherwise.
-     *
-     * @since RegionAPI 1.0
      */
-    operator fun contains(region: Region): Boolean
+    operator fun contains(region: Region): Boolean = regions.contains(region)
 
     /**
      * The amount of [Region]s inside this pool.
-     *
-     * @since RegionAPI 1.0
      */
     val size: Int
+        get() = regions.size
 
     /**
      * Gets the [Region] inside this pool with the given name.
@@ -52,10 +51,8 @@ interface RegionPool {
      *
      * @return The region inside this pool with that name,
      * or null, if it doesn't exist.
-     *
-     * @since RegionAPI 1.0
      */
-    operator fun get(name: String): Region?
+    operator fun get(name: String): Region? = regions.firstOrNull { it.name == name }
 
     /**
      * Creates a new [Region] inside this region pool.
@@ -67,10 +64,19 @@ interface RegionPool {
      * @return The created region
      *
      * @throws IllegalStateException If the name provided was not unique.
-     *
-     * @since RegionAPI 1.0
      */
-    fun createRegion(name: String): Region
+    fun createRegion(name: String): Region {
+        regions as MutableList
+
+        if (regions.any { it.name == name })
+            throw IllegalStateException("attempted to add non-member region '${name}' from pool '${this.name}' but it was still there")
+
+        val region = Region(name, this)
+
+        regions.add(region)
+
+        return region
+    }
 
     /**
      * Removes a given [Region] from this pool.
@@ -82,9 +88,15 @@ interface RegionPool {
      *
      * @throws IllegalStateException If the given region was not part of
      * this pool.
-     *
-     * @since RegionAPI 1.0
      */
-    fun remove(region: Region)
+    fun remove(region: Region) {
+
+        regions as MutableList
+
+        if (!contains(region))
+            throw IllegalStateException("attempted to remove non-member region '${region.name}' from pool '$name'")
+
+        regions.remove(region)
+    }
 
 }

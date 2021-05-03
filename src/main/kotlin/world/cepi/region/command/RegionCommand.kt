@@ -9,12 +9,13 @@ import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.event.player.PlayerDisconnectEvent
 import world.cepi.kepi.messages.sendFormattedMessage
 import world.cepi.kepi.subcommands.Help
+import world.cepi.kstom.Manager
+import world.cepi.kstom.addEventCallback
 import world.cepi.kstom.command.addSyntax
 import world.cepi.kstom.command.arguments.literal
 import world.cepi.kstom.command.setArgumentCallback
 import world.cepi.region.api.RegionProvider
 import world.cepi.region.Selection
-import world.cepi.region.api.Region
 import java.util.*
 
 object RegionCommand : Command("region") {
@@ -22,8 +23,8 @@ object RegionCommand : Command("region") {
     private val selectedPositions = HashMap<CommandSender, Selection>()
 
     init {
-        MinecraftServer.getGlobalEventHandler().addEventCallback(PlayerDisconnectEvent::class.java) {
-            selectedPositions.remove(it.player)
+        Manager.globalEvent.addEventCallback<PlayerDisconnectEvent> {
+            selectedPositions.remove(player)
         }
 
         val create = "create".literal()

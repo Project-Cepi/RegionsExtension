@@ -6,7 +6,9 @@ import net.minestom.server.MinecraftServer
 import net.minestom.server.command.CommandSender
 import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.arguments.ArgumentType
+import net.minestom.server.entity.Player
 import net.minestom.server.event.player.PlayerDisconnectEvent
+import net.minestom.server.instance.Instance
 import world.cepi.kepi.messages.sendFormattedMessage
 import world.cepi.kepi.subcommands.Help
 import world.cepi.kstom.Manager
@@ -33,7 +35,7 @@ object RegionCommand : Command("region") {
         val pos1 = "pos1".literal()
         val pos2 = "pos2".literal()
 
-        val blocks = "blocks".literal()
+        val selections = "selections".literal()
         val add = "add".literal()
         val remove = "remove".literal()
 
@@ -41,73 +43,66 @@ object RegionCommand : Command("region") {
 
         val show = "show".literal()
 
-        val pool = "pool".literal()
+        val regionName = ArgumentType.DynamicWord("regionName")
+            .fromRestrictions { RegionProvider.regions.containsKey(it) }
 
-        val poolName = ArgumentType.DynamicWord("poolName")
-            .fromRestrictions { RegionProvider.pools.any { pool -> pool.name == it } }
-            .map {
-                RegionProvider[it]!!
-            }
-
-        setArgumentCallback(poolName) { sender, exception ->
-            sender.sendFormattedMessage(regionPoolNotExist, Component.text(exception.input, NamedTextColor.BLUE))
+        setArgumentCallback(regionName) { sender, exception ->
+            sender.sendFormattedMessage(regionDoesNotExist, Component.text(exception.input, NamedTextColor.BLUE))
         }
 
-        val regionName = ArgumentType.DynamicWord("regionName")
-            .fromRestrictions { input -> RegionProvider.pools.map { it.regions }.flatten().any { it.name == input } }
-
         val newRegionName = ArgumentType.String("newRegionName")
+        // Find some instance as a default value.
+        // The default value would be rarely used as if a command is sent by a player then the instance in which the
+        // player is in will be used, and if it is sent by a console then the UUID should be specified.
+        val worldId = ArgumentType.UUID("worldId").setDefaultValue{ MinecraftServer.getInstanceManager().instances.firstOrNull()?.uniqueId }
 
 
         addSubcommand(Help(
-            Component.text("/$name create <pool name> <region name>"),
-                Component.text(" Creates a new region in a given regionpool."),
-                Component.text("/$name delete <pool name> <region name>"),
-                Component.text(" Deletes a region in a given regionpool."),
+            Component.text("/$name create <region name> [<world uuid>]"),
+                Component.text(" Creates a new region."),
+                Component.text("/$name delete <region name>"),
+                Component.text(" Deletes a region."),
                 Component.text("/$name pos1 [<coordinates>]"),
                 Component.text(" Sets/gets the first position for making a selection."),
                 Component.text("/$name pos2 [<coordinates>]"),
                 Component.text(" Sets/gets the second position for making a selection."),
-                Component.text("/$name addblocks <pool name> <region name> [<world uuid>]"),
-                Component.text(" Adds the selected blocks to the region in the given regionpool"),
-                Component.text("/$name removeblocks <pool name> <region name> [<world uuid>]"),
-                Component.text(" Removes the selected blocks from the region in"),
-                Component.text(" the given regionpool."),
-                Component.text("/$name list [<pool name>]"),
-                Component.text(" Lists all the regions in the given regionpool,"),
-                Component.text(" or all the pools if argument omitted."),
-                Component.text("/$name show <pool name> <region name>"),
-                Component.text(" Visually show the region in the given regionpool."),
-                Component.text("/$name createpool <pool name>"),
-                Component.text(" Creates a new regionpool."),
-                Component.text("/$name deletepool <pool name>"),
-                Component.text(" Deletes a regionpool."),
+                Component.text("/$name selections <region name> add <region name> [<world uuid>]"),
+                Component.text(" Adds the selected blocks to a given region."),
+                Component.text("/$name selections <region name> remove <index> [<world uuid>]"),
+                Component.text(" Removes a selection from the region."),
+                Component.text("/$name selections <region name> list [<pool name>]"),
+                Component.text(" Lists all the selections in a given region."),
+                Component.text("/$name list"),
+                Component.text(" Lists all of the registered regions."),
+                Component.text("/$name show <region name>"),
+                Component.text(" Visually show a given region."),
 
         ))
 
-        addSyntax(create, poolName, newRegionName) { sender, args ->
-            val poolObject = args.get(poolName)
+        addSyntax(create, newRegionName, worldId) { sender, args ->
+            val instance = if(sender is Player) {
+                sender.instance!!
+            } else {
+                MinecraftServer.getInstanceManager().getInstance(args.get(worldId))!!
+            }
 
-            val region = poolObject.createRegion(args.get(newRegionName))
+
+            val region = RegionProvider.createRegion(args.get(newRegionName), instance)
 
             sender.sendFormattedMessage(
                 regionCreated,
-                Component.text(poolObject.name),
                 Component.text(region.name)
             )
         }
 
-        addSyntax(delete, poolName, regionName) { sender, args ->
-            val poolObject = args.get(poolName)
+        addSyntax(delete, regionName) { sender, args ->
+            val region = args.get(regionName)
 
-            val region = poolObject[args.get(newRegionName)]!!
-
-            poolObject.remove(region)
+            RegionProvider.remove(region)
 
             sender.sendFormattedMessage(
                 regionDeleted,
-                Component.text(poolObject.name),
-                Component.text(region.name)
+                Component.text(region)
             )
         }
 
@@ -119,28 +114,22 @@ object RegionCommand : Command("region") {
 
         }
 
-        addSyntax(blocks, add) { sender, args ->
+        addSyntax(selections, regionName, add) { sender, args ->
 
         }
 
-        addSyntax(blocks, remove) { sender, args ->
+        addSyntax(selections, regionName, remove) { sender, args ->
 
         }
 
-        addSyntax(pool, create) { sender, args ->
-
-        }
-
-        addSyntax(pool, delete) { sender, args ->
+        addSyntax(selections, regionName, list) { sender, args ->
 
         }
 
         addSyntax(list) { sender ->
-            val pools = RegionProvider.pools
+            val regions = RegionProvider.regions.values
 
-            pools.joinToString { it.name }
-
-            sender.sendFormattedMessage(regionPoolsList, Component.text(pools.joinToString { it.name }))
+            sender.sendFormattedMessage(regionsList, Component.text(regions.joinToString { it.name }))
         }
 
         addSyntax(show) { sender ->

@@ -18,10 +18,10 @@ data class Region(
      */
     val name: String,
     /**
-     * The [RegionPool] in which this region
-     * resided in. Or null, if this region has been removed.
+     * The [Instance] in which this region
+     * resides in.
      */
-    val pool: RegionPool,
+    val instance: Instance,
 ) : DataContainer {
 
     private var _data: Data? = null
@@ -114,7 +114,7 @@ data class Region(
      * @param T the class to check against
      */
     inline fun <reified T: Entity> findEntities(): Set<T> =
-        selections.map { it.find(pool.instance) }.flatten().filterIsInstance(T::class.java).toSet()
+        selections.map { it.find(instance) }.flatten().filterIsInstance(T::class.java).toSet()
 
     /**
      * Creates a collection of all the entities which type

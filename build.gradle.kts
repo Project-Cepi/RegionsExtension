@@ -36,16 +36,16 @@ dependencies {
     compileOnly(kotlin("reflect"))
 
     // Compile Minestom into project
-    compileOnly("com.github.Project-Cepi:Minestom:cd0ea0c0c2")
+    compileOnly("com.github.Project-Cepi:Minestom:d871cb2c9c")
 
     // Get KStom
-    compileOnly("com.github.Project-Cepi:KStom:570ab31fd2")
+    compileOnly("com.github.Project-Cepi:KStom:433ec7b243")
 
     // import kotlinx serialization
-    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.0")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
 
     // Add Kepi
-    compileOnly("com.github.Project-Cepi:Kepi:32e01e199f")
+    compileOnly("com.github.Project-Cepi:Kepi:c6ed2d6884")
 }
 
 tasks.withType<Test> {

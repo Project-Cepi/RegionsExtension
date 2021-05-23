@@ -31,14 +31,8 @@ object RegionCommand : Command("region") {
         MinecraftServer.getInstanceManager().getInstance(world)?: throw ArgumentSyntaxException("Invalid world", world.toString(), 1)
     }.setDefaultValue { MinecraftServer.getInstanceManager().instances.firstOrNull() }
 
-    val posX = ArgumentType.Integer("posX")
-    val posY = ArgumentType.Integer("posY")
-    val posZ = ArgumentType.Integer("posZ")
-
     val create = "create".literal()
     val delete = "delete".literal()
-    val pos1 = "pos1".literal()
-    val pos2 = "pos2".literal()
     val list = "list".literal()
     val show = "show".literal()
 
@@ -76,17 +70,13 @@ object RegionCommand : Command("region") {
             sender.sendMessage(regionDeleted)
         }
 
-        addSyntax(pos1, posX, posY, posZ) { sender, args ->
-
-        }
-
-        addSyntax(pos2, posX, posY, posZ) { sender, args ->
-
-        }
-
         addSyntax(list) { sender, args ->
             val regions = RegionProvider.regions.values
             sender.sendFormattedMessage(Component.text(regionsList), Component.text(regions.joinToString { it.name }))
+        }
+
+        addSyntax(show) { sender, args ->
+
         }
 
         addSubcommand(Help(
@@ -94,9 +84,9 @@ object RegionCommand : Command("region") {
             Component.text(" Creates a new region."),
             Component.text("/$name delete <region name>"),
             Component.text(" Deletes a region."),
-            Component.text("/$name pos1 [<coordinates>]"),
+            Component.text("/$name selections pos1 [<coordinates>]"),
             Component.text(" Sets/gets the first position for making a selection."),
-            Component.text("/$name pos2 [<coordinates>]"),
+            Component.text("/$name selections pos2 [<coordinates>]"),
             Component.text(" Sets/gets the second position for making a selection."),
             Component.text("/$name selections <region name> add <region name> [<world uuid>]"),
             Component.text(" Adds the selected blocks to a given region."),

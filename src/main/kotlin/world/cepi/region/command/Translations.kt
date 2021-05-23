@@ -1,6 +1,8 @@
 package world.cepi.region.command
 
-const val regionDoesNotExist = "Region does not exist: %1"
-const val regionCreated = "Region created: %1"
-const val regionDeleted = "Region deleted: %1"
+const val regionAlreadyExists = "Region already exists!"
+const val regionDoesNotExist = "Region does not exist!"
+const val worldDoesNotExist = "World does not exist!"
+const val regionCreated = "Region created!"
+const val regionDeleted = "Region deleted!"
 const val regionsList = "Regions: %1"

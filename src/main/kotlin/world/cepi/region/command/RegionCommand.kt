@@ -1,140 +1,116 @@
 package world.cepi.region.command
 
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.NamedTextColor
 import net.minestom.server.MinecraftServer
-import net.minestom.server.command.CommandSender
 import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.arguments.ArgumentType
+import net.minestom.server.command.builder.exception.ArgumentSyntaxException
 import net.minestom.server.entity.Player
-import net.minestom.server.event.player.PlayerDisconnectEvent
-import net.minestom.server.instance.Instance
 import world.cepi.kepi.messages.sendFormattedMessage
+import world.cepi.kepi.messages.sendFormattedTranslatableMessage
 import world.cepi.kepi.subcommands.Help
-import world.cepi.kstom.Manager
-import world.cepi.kstom.addEventCallback
-import world.cepi.kstom.command.addSyntax
 import world.cepi.kstom.command.arguments.literal
 import world.cepi.kstom.command.setArgumentCallback
+import world.cepi.kstom.command.addSyntax
 import world.cepi.region.api.RegionProvider
-import world.cepi.region.Selection
-import java.util.*
 
 object RegionCommand : Command("region") {
+    val regionName = ArgumentType.Word("name").map { name ->
+        val region = RegionProvider[name]
+        if(region != null) throw ArgumentSyntaxException("Crate exists", name, 1)
+        name
+    }
 
-    private val selectedPositions = HashMap<CommandSender, Selection>()
+    val existingRegion = ArgumentType.Word("region").map { name ->
+        RegionProvider[name]?: throw ArgumentSyntaxException("Invalid crate", name, 1)
+    }
+    // Find some instance as a default value.
+    // The default value would be rarely used as if a command is sent by a player then the instance in which the
+    // player is in will be used, and if it is sent by a console then the UUID should be specified.
+    val world = ArgumentType.UUID("world").map { world ->
+        MinecraftServer.getInstanceManager().getInstance(world)?: throw ArgumentSyntaxException("Invalid world", world.toString(), 1)
+    }.setDefaultValue { MinecraftServer.getInstanceManager().instances.firstOrNull() }
+
+    val posX = ArgumentType.Integer("posX")
+    val posY = ArgumentType.Integer("posY")
+    val posZ = ArgumentType.Integer("posZ")
+
+    val create = "create".literal()
+    val delete = "delete".literal()
+    val pos1 = "pos1".literal()
+    val pos2 = "pos2".literal()
+    val list = "list".literal()
+    val show = "show".literal()
 
     init {
-        Manager.globalEvent.addEventCallback<PlayerDisconnectEvent> {
-            selectedPositions.remove(player)
-        }
-
-        val create = "create".literal()
-        val delete = "delete".literal()
-
-        val pos1 = "pos1".literal()
-        val pos2 = "pos2".literal()
-
-        val selections = "selections".literal()
-        val add = "add".literal()
-        val remove = "remove".literal()
-
-        val list = "list".literal()
-
-        val show = "show".literal()
-
-        val regionName = ArgumentType.DynamicWord("regionName")
-            .fromRestrictions { RegionProvider.regions.containsKey(it) }
-
+        //TODO: Translations
         setArgumentCallback(regionName) { sender, exception ->
-            sender.sendFormattedMessage(regionDoesNotExist, Component.text(exception.input, NamedTextColor.BLUE))
+            sender.sendMessage(regionAlreadyExists)
         }
 
-        val newRegionName = ArgumentType.String("newRegionName")
-        // Find some instance as a default value.
-        // The default value would be rarely used as if a command is sent by a player then the instance in which the
-        // player is in will be used, and if it is sent by a console then the UUID should be specified.
-        val worldId = ArgumentType.UUID("worldId").setDefaultValue{ MinecraftServer.getInstanceManager().instances.firstOrNull()?.uniqueId }
+        setArgumentCallback(existingRegion) { sender, exception ->
+            sender.sendMessage(regionDoesNotExist)
+        }
 
+        setArgumentCallback(world) { sender, exception ->
+            sender.sendMessage(worldDoesNotExist)
+        }
 
-        addSubcommand(Help(
-            Component.text("/$name create <region name> [<world uuid>]"),
-                Component.text(" Creates a new region."),
-                Component.text("/$name delete <region name>"),
-                Component.text(" Deletes a region."),
-                Component.text("/$name pos1 [<coordinates>]"),
-                Component.text(" Sets/gets the first position for making a selection."),
-                Component.text("/$name pos2 [<coordinates>]"),
-                Component.text(" Sets/gets the second position for making a selection."),
-                Component.text("/$name selections <region name> add <region name> [<world uuid>]"),
-                Component.text(" Adds the selected blocks to a given region."),
-                Component.text("/$name selections <region name> remove <index> [<world uuid>]"),
-                Component.text(" Removes a selection from the region."),
-                Component.text("/$name selections <region name> list [<pool name>]"),
-                Component.text(" Lists all the selections in a given region."),
-                Component.text("/$name list"),
-                Component.text(" Lists all of the registered regions."),
-                Component.text("/$name show <region name>"),
-                Component.text(" Visually show a given region."),
+        addSyntax { sender ->
+            sender.sendFormattedTranslatableMessage("common", "usage", Component.text("/region create|delete|pos1|pos2|selections|list|show <args>"))
+        }
 
-        ))
-
-        addSyntax(create, newRegionName, worldId) { sender, args ->
+        addSyntax(create, regionName, world) { sender, args ->
             val instance = if(sender is Player) {
                 sender.instance!!
             } else {
-                MinecraftServer.getInstanceManager().getInstance(args.get(worldId))!!
+                args.get(world)
             }
 
-
-            val region = RegionProvider.createRegion(args.get(newRegionName), instance)
-
-            sender.sendFormattedMessage(
-                regionCreated,
-                Component.text(region.name)
-            )
+            RegionProvider.createRegion(args.get(regionName), instance)
+            sender.sendMessage(regionCreated)
         }
 
-        addSyntax(delete, regionName) { sender, args ->
-            val region = args.get(regionName)
-
-            RegionProvider.remove(region)
-
-            sender.sendFormattedMessage(
-                regionDeleted,
-                Component.text(region)
-            )
+        addSyntax(delete, existingRegion) { sender, args ->
+            RegionProvider.remove(args.get(existingRegion).name)
+            sender.sendMessage(regionDeleted)
         }
 
-        addSyntax(pos1) { sender ->
+        addSyntax(pos1, posX, posY, posZ) { sender, args ->
 
         }
 
-        addSyntax(pos2) { sender ->
+        addSyntax(pos2, posX, posY, posZ) { sender, args ->
 
         }
 
-        addSyntax(selections, regionName, add) { sender, args ->
-
-        }
-
-        addSyntax(selections, regionName, remove) { sender, args ->
-
-        }
-
-        addSyntax(selections, regionName, list) { sender, args ->
-
-        }
-
-        addSyntax(list) { sender ->
+        addSyntax(list) { sender, args ->
             val regions = RegionProvider.regions.values
-
-            sender.sendFormattedMessage(regionsList, Component.text(regions.joinToString { it.name }))
+            sender.sendFormattedMessage(Component.text(regionsList), Component.text(regions.joinToString { it.name }))
         }
 
-        addSyntax(show) { sender ->
+        addSubcommand(Help(
+            Component.text("/$name create <region name> [<world uuid>]"),
+            Component.text(" Creates a new region."),
+            Component.text("/$name delete <region name>"),
+            Component.text(" Deletes a region."),
+            Component.text("/$name pos1 [<coordinates>]"),
+            Component.text(" Sets/gets the first position for making a selection."),
+            Component.text("/$name pos2 [<coordinates>]"),
+            Component.text(" Sets/gets the second position for making a selection."),
+            Component.text("/$name selections <region name> add <region name> [<world uuid>]"),
+            Component.text(" Adds the selected blocks to a given region."),
+            Component.text("/$name selections <region name> remove <index> [<world uuid>]"),
+            Component.text(" Removes a selection from the region."),
+            Component.text("/$name selections <region name> list"),
+            Component.text(" Lists all the selections in a given region."),
+            Component.text("/$name list"),
+            Component.text(" Lists all of the registered regions."),
+            Component.text("/$name show <region name>"),
+            Component.text(" Visually show a given region."),
+            )
+        )
 
-        }
-
+        //TODO: Register selections subcommand
     }
 }

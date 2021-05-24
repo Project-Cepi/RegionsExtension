@@ -64,7 +64,7 @@ data class Region(
      * @return The amount of blocks that were added in total. This can be less than the
      * actual selection, if part of the selected area was already in the region.
      */
-    fun addBlocks(selection: Selection): Int {
+    fun addSelection(selection: Selection): Int {
 
         simplifyWith(selection)
 
@@ -100,7 +100,7 @@ data class Region(
      * @return The amount of blocks that were removed in total. This can be less than the
      * actual selection, if the selected area was not entirely inside the region.
      */
-    fun removeBlocks(selection: Selection): Int {
+    fun removeSelection(selection: Selection): Int {
         // Remove all selections that are in this selection
         simplifyWith(selection)
 

@@ -13,6 +13,7 @@ import world.cepi.kstom.command.arguments.literal
 import world.cepi.kstom.command.setArgumentCallback
 import world.cepi.kstom.command.addSyntax
 import world.cepi.region.api.RegionProvider
+import world.cepi.region.command.subcommand.SelectionsSubcommand
 
 object RegionCommand : Command("region") {
     val regionName = ArgumentType.Word("name").map { name ->
@@ -51,7 +52,7 @@ object RegionCommand : Command("region") {
         }
 
         addSyntax { sender ->
-            sender.sendFormattedTranslatableMessage("common", "usage", Component.text("/region create|delete|pos1|pos2|selections|list|show <args>"))
+            sender.sendFormattedTranslatableMessage("common", "usage", Component.text("/region create|delete|selections|list|show <args>"))
         }
 
         addSyntax(create, regionName, world) { sender, args ->
@@ -101,6 +102,6 @@ object RegionCommand : Command("region") {
             )
         )
 
-        //TODO: Register selections subcommand
+        addSubcommand(SelectionsSubcommand)
     }
 }

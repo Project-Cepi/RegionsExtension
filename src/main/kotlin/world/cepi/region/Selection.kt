@@ -1,14 +1,19 @@
 package world.cepi.region
 
+import kotlinx.serialization.Serializable
 import net.minestom.server.entity.Entity
 import net.minestom.server.instance.Instance
 import net.minestom.server.utils.BlockPosition
+import world.cepi.region.serialization.BlockPositionSerializer
 
 /**
  * Represents two block positions and the region between them.
  */
+@Serializable
 data class Selection(
+    @Serializable(with=BlockPositionSerializer::class)
     var pos1: BlockPosition,
+    @Serializable(with=BlockPositionSerializer::class)
     var pos2: BlockPosition
 ) {
 

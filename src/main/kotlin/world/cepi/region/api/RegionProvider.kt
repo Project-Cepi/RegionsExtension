@@ -1,6 +1,10 @@
 package world.cepi.region.api
 
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import net.minestom.server.instance.Instance
+import java.io.File
 
 /**
  * Represents a RegionAPI implementation.
@@ -12,6 +16,12 @@ import net.minestom.server.instance.Instance
 object RegionProvider {
 
     val regions: Map<String, Region> = mutableMapOf()
+    private val format = Json {
+        prettyPrint = true
+        ignoreUnknownKeys = true
+        coerceInputValues = true
+        isLenient = true
+    }
 
     /**
      * Gets the [Region] with the specified name,
@@ -69,5 +79,17 @@ object RegionProvider {
         }
 
         regions.remove(name)
+    }
+
+    fun loadFromFile(file: File) {
+        regions as MutableMap
+
+        val loaded = format.decodeFromString<Map<String,Region>>(file.readText())
+
+        loaded.forEach { (name, region) -> regions[name] = region}
+    }
+
+    fun saveToFile(file: File) {
+        file.writeText(format.encodeToString(regions))
     }
 }

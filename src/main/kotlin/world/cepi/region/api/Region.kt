@@ -1,5 +1,8 @@
 package world.cepi.region.api
 
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import net.minestom.server.data.Data
 import net.minestom.server.data.DataContainer
 import net.minestom.server.entity.Entity
@@ -7,11 +10,14 @@ import net.minestom.server.entity.EntityType
 import net.minestom.server.instance.Instance
 import net.minestom.server.utils.BlockPosition
 import world.cepi.region.Selection
+import world.cepi.region.serialization.RegionSerializer
 
 /**
  * Represents a 3-dimensional non-uniform region.
  * (Though it can be uniform, if you define it like so.)
  */
+@ExperimentalSerializationApi
+@Serializable(with = RegionSerializer::class)
 data class Region(
     /**
      * The unique name of this region.
@@ -133,5 +139,4 @@ data class Region(
     override fun setData(data: Data?) {
         _data = data
     }
-
 }

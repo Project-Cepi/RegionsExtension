@@ -17,11 +17,10 @@ data class Selection(
     var pos2: BlockPosition
 ) {
 
-    fun contains(position: BlockPosition): Boolean {
-        return (pos1.x..pos2.x).contains(position.x) &&
+    fun contains(position: BlockPosition): Boolean =
+        (pos1.x..pos2.x).contains(position.x) &&
                 (pos1.y..pos2.y).contains(position.y) &&
                 (pos1.z..pos2.z).contains(position.z)
-    }
 
     /**
      * Check if this selection contains the entity's position
@@ -52,9 +51,10 @@ data class Selection(
      *
      * @return If any part of the [Selection] intersects with the other [selection]
      */
-    fun containsSome(selection: Selection): Boolean {
-        return false // TODO
-    }
+    fun containsSome(selection: Selection): Boolean =
+        (pos1.x..pos2.x).contains(selection.pos1.x..selection.pos2.x) &&
+                (pos1.y..pos2.y).contains(selection.pos1.y..selection.pos2.y) &&
+                (pos1.z..pos2.z).contains(selection.pos1.z..pos2.z)
 
     /**
      * Finds all entities in an [instance] that are in this [Selection]
@@ -66,4 +66,15 @@ data class Selection(
     fun find(instance: Instance): List<Entity> {
         return instance.entities.filter { contains(it) }
     }
+
+    // Probably should move this into a utility class
+    /**
+     * Check if an [IntRange] has values which are contained within this [IntRange]
+     *
+     * @param value The [IntRange] to check
+     *
+     * @return If parts of the [IntRange] are contained within this [IntRange]
+     */
+    fun IntRange.contains(value: IntRange): Boolean =
+        (this.first >= value.last) && (this.last <= value.first)
 }

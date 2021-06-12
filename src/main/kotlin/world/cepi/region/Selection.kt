@@ -29,9 +29,9 @@ data class Selection(
      *
      * @return If this entity's position is in this selection.
      */
-    fun contains(entity: Entity): Boolean {
-        return contains(entity.position.toBlockPosition())
-    }
+    fun contains(entity: Entity): Boolean =
+        contains(entity.position.toBlockPosition())
+
 
     /**
      * Check if this [Selection] contains the full [selection].
@@ -40,9 +40,9 @@ data class Selection(
      *
      * @return If this [selection] is fully contained inside this [Selection]
      */
-    fun containsAll(selection: Selection): Boolean {
-        return contains(selection.pos1) && contains(selection.pos2)
-    }
+    fun containsAll(selection: Selection): Boolean =
+        contains(selection.pos1) && contains(selection.pos2)
+
 
     /**
      * Check if this [Selection] intersects with another [selection]
@@ -63,9 +63,8 @@ data class Selection(
      *
      * @return A list of entities who are in this [Selection]
      */
-    fun find(instance: Instance): List<Entity> {
-        return instance.entities.filter { contains(it) }
-    }
+    fun find(instance: Instance): List<Entity> =
+        instance.entities.filter { contains(it) }
 
     // Probably should move this into a utility class
     /**

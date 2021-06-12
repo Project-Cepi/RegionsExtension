@@ -18,8 +18,8 @@ data class Selection(
 ) {
 
     fun contains(position: BlockPosition): Boolean {
-        return (pos1.x..pos2.x).contains(position.x) ||
-                (pos1.y..pos2.y).contains(position.y) ||
+        return (pos1.x..pos2.x).contains(position.x) &&
+                (pos1.y..pos2.y).contains(position.y) &&
                 (pos1.z..pos2.z).contains(position.z)
     }
 

@@ -1,8 +1,6 @@
 package world.cepi.region.api
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import net.minestom.server.data.Data
 import net.minestom.server.data.DataContainer
 import net.minestom.server.entity.Entity
@@ -16,7 +14,6 @@ import world.cepi.region.serialization.RegionSerializer
  * Represents a 3-dimensional non-uniform region.
  * (Though it can be uniform, if you define it like so.)
  */
-@ExperimentalSerializationApi
 @Serializable(with = RegionSerializer::class)
 data class Region(
     /**

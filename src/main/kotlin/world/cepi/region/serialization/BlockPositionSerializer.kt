@@ -1,6 +1,5 @@
 package world.cepi.region.serialization
 
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -9,7 +8,6 @@ import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.*
 import net.minestom.server.utils.BlockPosition
 
-@ExperimentalSerializationApi
 @Serializer(forClass = BlockPosition::class)
 object BlockPositionSerializer : KSerializer<BlockPosition> {
     override val descriptor: SerialDescriptor =

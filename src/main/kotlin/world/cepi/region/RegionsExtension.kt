@@ -2,16 +2,21 @@ package world.cepi.region
 
 import net.minestom.server.MinecraftServer
 import net.minestom.server.extensions.Extension
+import world.cepi.kstom.event.listenOnly
 import world.cepi.region.api.RegionProvider
 import world.cepi.region.command.RegionCommand
+import world.cepi.region.event.PlayerRegionHandler
 import java.io.File
 
 class RegionsExtension : Extension() {
 
     override fun initialize() {
+        RegionProvider.loadFromFile(regionsFile)
         MinecraftServer.getCommandManager().register(RegionCommand)
 
-        RegionProvider.loadFromFile(regionsFile)
+        with(eventNode) {
+            listenOnly(PlayerRegionHandler::register)
+        }
 
         logger.info("[RegionsExtension] has been enabled!")
     }

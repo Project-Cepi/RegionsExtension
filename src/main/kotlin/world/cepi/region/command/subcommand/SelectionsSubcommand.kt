@@ -28,7 +28,7 @@ object SelectionsSubcommand : Command("selections") {
 
     init {
         setCondition { sender, _ ->
-            if(!sender.isPlayer) {
+            if (!sender.isPlayer) {
                 sender.sendFormattedTranslatableMessage("common", "command.only_players")
                 return@setCondition false
             } else return@setCondition true

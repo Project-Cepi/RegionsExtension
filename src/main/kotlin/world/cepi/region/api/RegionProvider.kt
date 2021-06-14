@@ -5,6 +5,9 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.minestom.server.instance.Instance
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
 
 /**
  * Represents a RegionAPI implementation.
@@ -81,15 +84,15 @@ object RegionProvider {
         regions.remove(name)
     }
 
-    fun loadFromFile(file: File) {
+    fun loadFromFile(path: Path) {
         regions as MutableMap
 
-        val loaded = format.decodeFromString<Map<String,Region>>(file.readText())
+        val loaded = format.decodeFromString<Map<String,Region>>(path.readText())
 
         loaded.forEach { (name, region) -> regions[name] = region}
     }
 
-    fun saveToFile(file: File) {
-        file.writeText(format.encodeToString(regions))
+    fun saveToFile(path: Path) {
+        path.writeText(format.encodeToString(regions))
     }
 }

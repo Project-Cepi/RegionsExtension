@@ -1,5 +1,6 @@
 package world.cepi.region.serialization
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -26,6 +27,7 @@ object BlockPositionSerializer : KSerializer<BlockPosition> {
         }
     }
 
+    @ExperimentalSerializationApi
     override fun deserialize(decoder: Decoder): BlockPosition =
         decoder.decodeStructure(descriptor) {
             var x = 0

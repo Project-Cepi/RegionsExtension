@@ -9,13 +9,12 @@ import world.cepi.region.api.Region
 class PlayerRegionUpdateEvent(private val _player: Player, currentRegion: Region?, newRegion: Region?, currentPos: Position, newPos: Position) : PlayerEvent, CancellableEvent {
     private var _cancelled = false
 
-    override fun getPlayer(): Player {
-        return _player
-    }
+    override fun getPlayer() =
+        _player
 
-    override fun isCancelled(): Boolean {
-        return _cancelled
-    }
+    override fun isCancelled() =
+        _cancelled
+
 
     override fun setCancelled(cancel: Boolean) {
         _cancelled = cancel

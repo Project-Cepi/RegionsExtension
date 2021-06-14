@@ -84,7 +84,7 @@ object RegionProvider {
         regions.remove(name)
     }
 
-    fun loadFromFile(path: Path) {
+    fun loadFromPath(path: Path) {
         regions as MutableMap
 
         val loaded = format.decodeFromString<Map<String,Region>>(path.readText())
@@ -92,7 +92,7 @@ object RegionProvider {
         loaded.forEach { (name, region) -> regions[name] = region}
     }
 
-    fun saveToFile(path: Path) {
+    fun saveToPath(path: Path) {
         path.writeText(format.encodeToString(regions))
     }
 }

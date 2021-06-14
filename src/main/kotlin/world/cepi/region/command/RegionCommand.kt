@@ -39,15 +39,15 @@ object RegionCommand : Command("region") {
 
     init {
         //TODO: Translations
-        setArgumentCallback(regionName) { sender, exception ->
+        setArgumentCallback(regionName) { sender ->
             sender.sendMessage(regionAlreadyExists)
         }
 
-        setArgumentCallback(existingRegion) { sender, exception ->
+        setArgumentCallback(existingRegion) { sender ->
             sender.sendMessage(regionDoesNotExist)
         }
 
-        setArgumentCallback(world) { sender, exception ->
+        setArgumentCallback(world) { sender ->
             sender.sendMessage(worldDoesNotExist)
         }
 
@@ -71,7 +71,7 @@ object RegionCommand : Command("region") {
             sender.sendMessage(regionDeleted)
         }
 
-        addSyntax(list) { sender, args ->
+        addSyntax(list) { sender ->
             val regions = RegionProvider.regions.values
             sender.sendFormattedMessage(Component.text(regionsList), Component.text(regions.joinToString { it.name }))
         }

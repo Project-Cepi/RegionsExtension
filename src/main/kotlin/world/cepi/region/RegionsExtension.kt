@@ -7,7 +7,6 @@ import world.cepi.kstom.command.unregister
 import world.cepi.region.api.RegionProvider
 import world.cepi.region.command.RegionCommand
 import world.cepi.region.event.PlayerRegionHandler
-import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.createDirectories
 import kotlin.io.path.createFile
@@ -18,7 +17,7 @@ class RegionsExtension : Extension() {
     override fun initialize() {
         RegionCommand.register()
 
-        RegionProvider.loadFromFile(regionsFile)
+        RegionProvider.loadFromPath(regionsFile)
 
         with(eventNode) {
             listenOnly(PlayerRegionHandler::register)
@@ -30,7 +29,7 @@ class RegionsExtension : Extension() {
     override fun terminate() {
         RegionCommand.unregister()
 
-        RegionProvider.saveToFile(regionsFile)
+        RegionProvider.saveToPath(regionsFile)
 
         logger.info("[RegionsExtension] has been disabled!")
     }

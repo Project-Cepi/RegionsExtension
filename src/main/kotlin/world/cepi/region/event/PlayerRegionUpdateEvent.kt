@@ -6,7 +6,13 @@ import net.minestom.server.event.trait.PlayerEvent
 import net.minestom.server.utils.Position
 import world.cepi.region.api.Region
 
-class PlayerRegionUpdateEvent(private val _player: Player, currentRegion: Region?, newRegion: Region?, currentPos: Position, newPos: Position) : PlayerEvent, CancellableEvent {
+class PlayerRegionUpdateEvent(
+    private val _player: Player,
+    val currentRegion: Region?,
+    val newRegion: Region?,
+    val currentPos: Position,
+    val newPos: Position
+) : PlayerEvent, CancellableEvent {
     private var _cancelled = false
 
     override fun getPlayer() =

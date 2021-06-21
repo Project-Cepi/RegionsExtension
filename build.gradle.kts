@@ -33,7 +33,7 @@ dependencies {
     compileOnly(kotlin("reflect"))
 
     // Compile Minestom into project
-    compileOnly("com.github.Minestom:Minestom:78cc392007")
+    compileOnly("com.github.Minestom:Minestom:1f2dc0cd9f")
 
     // Get KStom
     compileOnly("com.github.Project-Cepi:KStom:38216ae174")
@@ -42,7 +42,7 @@ dependencies {
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1")
 
     // Add Kepi
-    compileOnly("com.github.Project-Cepi:Kepi:c6ed2d6884")
+    compileOnly("com.github.Project-Cepi:Kepi:3d57f76a43")
 }
 
 tasks.withType<Test> {

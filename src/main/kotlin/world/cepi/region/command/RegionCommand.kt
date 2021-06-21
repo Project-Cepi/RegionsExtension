@@ -6,9 +6,9 @@ import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException
 import net.minestom.server.entity.Player
+import world.cepi.kepi.command.subcommand.applyHelp
 import world.cepi.kepi.messages.sendFormattedMessage
 import world.cepi.kepi.messages.sendFormattedTranslatableMessage
-import world.cepi.kepi.subcommands.Help
 import world.cepi.kstom.command.arguments.literal
 import world.cepi.kstom.command.setArgumentCallback
 import world.cepi.kstom.command.addSyntax
@@ -51,10 +51,6 @@ object RegionCommand : Command("region") {
             sender.sendMessage(worldDoesNotExist)
         }
 
-        addSyntax { sender ->
-            sender.sendFormattedTranslatableMessage("common", "usage", Component.text("/region create|delete|selections|list|show <args>"))
-        }
-
         addSyntax(create, regionName, world) { sender, args ->
             val instance = if(sender is Player) {
                 sender.instance!!
@@ -80,27 +76,28 @@ object RegionCommand : Command("region") {
 
         }
 
-        addSubcommand(Help(
-            Component.text("/$name create <region name> [<world uuid>]"),
-            Component.text(" Creates a new region."),
-            Component.text("/$name delete <region name>"),
-            Component.text(" Deletes a region."),
-            Component.text("/$name selections pos1 [<coordinates>]"),
-            Component.text(" Sets/gets the first position for making a selection."),
-            Component.text("/$name selections pos2 [<coordinates>]"),
-            Component.text(" Sets/gets the second position for making a selection."),
-            Component.text("/$name selections <region name> add"),
-            Component.text(" Adds the selected blocks to a given region."),
-            Component.text("/$name selections <region name> remove <index>"),
-            Component.text(" Removes a selection from the region."),
-            Component.text("/$name selections <region name> list"),
-            Component.text(" Lists all the selections in a given region."),
-            Component.text("/$name list"),
-            Component.text(" Lists all of the registered regions."),
-            Component.text("/$name show <region name>"),
-            Component.text(" Visually show a given region."),
-            )
-        )
+        applyHelp {
+            """
+                /$name create <region name> [<world uuid>]
+                 Creates a new region.
+                /$name delete <region name>
+                 Deletes a region.
+                /$name selections pos1 [<coordinates>]
+                 Sets/gets the first position for making a selection.
+                /$name selections pos2 [<coordinates>]
+                 Sets/gets the second position for making a selection.
+                /$name selections <region name> add
+                 Adds the selected blocks to a given region.
+                /$name selections <region name> remove <index>
+                 Removes a selection from the region.
+                /$name selections <region name> list
+                 Lists all the selections in a given region.
+                /$name list
+                 Lists all of the registered regions.
+                /$name show <region name>
+                 Visually show a given region.
+             """.trimIndent()
+        }
 
         addSubcommand(SelectionsSubcommand)
     }

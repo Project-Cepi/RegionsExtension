@@ -17,9 +17,7 @@ object SelectionsSubcommand : Command("selections") {
     val selections: Map<UUID, Selection> = mutableMapOf()
 
     val index = ArgumentType.Integer("index")
-    val x = ArgumentType.Integer("x")
-    val y = ArgumentType.Integer("y")
-    val z = ArgumentType.Integer("z")
+    val position = ArgumentType.RelativeBlockPosition("position")
 
     val add = "add".literal()
     val remove = "remove".literal()
@@ -35,20 +33,20 @@ object SelectionsSubcommand : Command("selections") {
         }
 
         // TODO: Translations
-        addSyntax(pos1, x, y, z) { sender, args ->
+        addSyntax(pos1, position) { sender, args ->
             selections as MutableMap
             sender as Player
 
             val selection = getOrCreateSelection(sender)
-            selection.pos1 = BlockPosition(args.get(x), args.get(y), args.get(z))
+            selection.pos1 = args.get(position).from(sender)
         }
 
-        addSyntax(pos2, x, y, z) { sender, args ->
+        addSyntax(pos2, position) { sender, args ->
             selections as MutableMap
             sender as Player
             
             val selection = getOrCreateSelection(sender)
-            selection.pos2 = BlockPosition(args.get(x), args.get(y), args.get(z))
+            selection.pos2 = args.get(position).from(sender)
         }
 
         addSyntax(RegionCommand.existingRegion, add) { sender, args ->

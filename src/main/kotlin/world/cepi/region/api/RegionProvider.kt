@@ -87,7 +87,11 @@ object RegionProvider {
     fun loadFromPath(path: Path) {
         regions as MutableMap
 
-        val loaded = format.decodeFromString<Map<String,Region>>(path.readText())
+        val loaded = try {
+            format.decodeFromString<Map<String,Region>>(path.readText())
+        } catch (exception: Exception) {
+            mutableMapOf()
+        }
 
         loaded.forEach { (name, region) -> regions[name] = region}
     }

@@ -1,11 +1,9 @@
 package world.cepi.region.command.subcommand
 
-import net.kyori.adventure.text.Component
 import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.entity.Player
 import net.minestom.server.utils.BlockPosition
-import world.cepi.kepi.messages.sendFormattedMessage
 import world.cepi.kepi.messages.sendFormattedTranslatableMessage
 import world.cepi.kstom.command.addSyntax
 import world.cepi.kstom.command.arguments.literal
@@ -33,45 +31,45 @@ object SelectionsSubcommand : Command("selections") {
         }
 
         // TODO: Translations
-        addSyntax(pos1, position) { sender, args ->
+        addSyntax(pos1, position) {
             selections as MutableMap
-            sender as Player
+            val player = sender as Player
 
-            val selection = getOrCreateSelection(sender)
-            selection.pos1 = args.get(position).from(sender)
+            val selection = getOrCreateSelection(player)
+            selection.pos1 = context.get(position).from(player)
         }
 
-        addSyntax(pos2, position) { sender, args ->
+        addSyntax(pos2, position) {
             selections as MutableMap
-            sender as Player
+            val player = sender as Player
             
-            val selection = getOrCreateSelection(sender)
-            selection.pos2 = args.get(position).from(sender)
+            val selection = getOrCreateSelection(player)
+            selection.pos2 = context.get(position).from(player)
         }
 
-        addSyntax(RegionCommand.existingRegion, add) { sender, args ->
+        addSyntax(RegionCommand.existingRegion, add) {
             selections as MutableMap
-            sender as Player
+            val player = sender as Player
 
-            if(!selections.contains(sender.uuid)) {
+            if (!selections.contains(player.uuid)) {
                 sender.sendMessage(selectionDoesNotExist)
             } else {
-                val region = args.get(RegionCommand.existingRegion)
+                val region = context.get(RegionCommand.existingRegion)
 
-                region.addSelection(selections[sender.uuid]!!)
-                selections.remove(sender.uuid)
+                region.addSelection(selections[player.uuid]!!)
+                selections.remove(player.uuid)
 
                 sender.sendMessage(selectionAdded)
             }
         }
 
-        addSyntax(RegionCommand.existingRegion, remove, index) { sender, args ->
-            sender as Player
+        addSyntax(RegionCommand.existingRegion, remove, index) {
+            val player = sender as Player
 
-            val region = args.get(RegionCommand.existingRegion)
-            val index = args.get(index)
+            val region = context.get(RegionCommand.existingRegion)
+            val index = context.get(index)
 
-            if(index >= 0 && index < region.selections.size) {
+            if (index >= 0 && index < region.selections.size) {
                 region.removeSelection(region.selections[index])
                 sender.sendMessage(selectionRemoved)
             } else {
@@ -79,7 +77,7 @@ object SelectionsSubcommand : Command("selections") {
             }
         }
 
-        addSyntax(RegionCommand.existingRegion, RegionCommand.list) { sender, args ->
+        addSyntax(RegionCommand.existingRegion, RegionCommand.list) {
 
         }
     }

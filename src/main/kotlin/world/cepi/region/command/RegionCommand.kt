@@ -26,9 +26,9 @@ object RegionCommand : Command("region") {
 
     val existingRegion = ArgumentType.Word("region").map { name ->
         RegionProvider[name]?: throw ArgumentSyntaxException("Invalid region", name, 1)
-    }.suggest { _, _ ->
+    }.suggest {
         RegionProvider.regions.values
-            .map { SuggestionEntry(it.name) }.toMutableList()
+            .map { it.name }
     }
     // Find some instance as a default value.
     // The default value would be rarely used as if a command is sent by a player then the instance in which the
@@ -44,40 +44,40 @@ object RegionCommand : Command("region") {
 
     init {
         //TODO: Translations
-        setArgumentCallback(regionName) { sender ->
+        setArgumentCallback(regionName) {
             sender.sendMessage(regionAlreadyExists)
         }
 
-        setArgumentCallback(existingRegion) { sender ->
+        setArgumentCallback(existingRegion) {
             sender.sendMessage(regionDoesNotExist)
         }
 
-        setArgumentCallback(world) { sender ->
+        setArgumentCallback(world) {
             sender.sendMessage(worldDoesNotExist)
         }
 
-        addSyntax(create, regionName, world) { sender, args ->
-            val instance = if(sender is Player) {
-                sender.instance!!
+        addSyntax(create, regionName, world) {
+            val instance = if (sender is Player) {
+                (sender as Player).instance!!
             } else {
-                args.get(world)
+                context.get(world)
             }
 
-            RegionProvider.createRegion(args.get(regionName), instance)
+            RegionProvider.createRegion(context.get(regionName), instance)
             sender.sendMessage(regionCreated)
         }
 
-        addSyntax(delete, existingRegion) { sender, args ->
-            RegionProvider.remove(args.get(existingRegion).name)
+        addSyntax(delete, existingRegion) {
+            RegionProvider.remove(context.get(existingRegion).name)
             sender.sendMessage(regionDeleted)
         }
 
-        addSyntax(list) { sender ->
+        addSyntax(list) {
             val regions = RegionProvider.regions.values
             sender.sendFormattedMessage(Component.text(regionsList), Component.text(regions.joinToString { it.name }))
         }
 
-        addSyntax(show) { sender, args ->
+        addSyntax(show) {
 
         }
 

@@ -5,6 +5,7 @@ import net.minestom.server.data.Data
 import net.minestom.server.data.DataContainer
 import net.minestom.server.entity.Entity
 import net.minestom.server.entity.EntityType
+import net.minestom.server.gamedata.tags.TagContainer
 import net.minestom.server.instance.Instance
 import net.minestom.server.utils.BlockPosition
 import world.cepi.region.Selection
@@ -25,14 +26,11 @@ data class Region(
      * resides in.
      */
     val instance: Instance,
-) : DataContainer {
-
-    private var _data: Data? = null
-
     /**
      * List of all selections
      */
     val selections: List<Selection> = mutableListOf()
+) : TagContainer() {
 
     /**
      * True, if this region contains at least one block.
@@ -130,10 +128,4 @@ data class Region(
      */
     fun findEntitiesByType(vararg types: EntityType): Collection<Entity> =
         findEntities<Entity>().filter { types.contains(it.entityType) }.toMutableList()
-
-    override fun getData(): Data? = _data
-
-    override fun setData(data: Data?) {
-        _data = data
-    }
 }

@@ -11,14 +11,17 @@ object PlayerRegionHandler {
         var currentRegion: Region? = null
         var newRegion: Region? = null
 
-        RegionProvider.regions.forEach { (_, region) ->
-            if (region.isInside(player.position.toBlockPosition())) {
-               currentRegion = region
+        RegionProvider.regions
+            .filter { it.value.instance.uniqueId == player.instance?.uniqueId }
+            .forEach { (_, region) ->
+
+                if (region.isInside(player.position.toBlockPosition())) {
+                   currentRegion = region
+                }
+                if (region.isInside(newPosition.toBlockPosition())) {
+                    newRegion = region
+                }
             }
-            if (region.isInside(newPosition.toBlockPosition())) {
-                newRegion = region
-            }
-        }
 
         if (currentRegion == newRegion)
             return@with

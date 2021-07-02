@@ -1,9 +1,11 @@
 package world.cepi.region.command.subcommand
 
+import net.kyori.adventure.text.Component
 import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.entity.Player
 import net.minestom.server.utils.BlockPosition
+import net.minestom.server.utils.location.RelativeBlockPosition
 import world.cepi.kepi.messages.sendFormattedTranslatableMessage
 import world.cepi.kstom.command.addSyntax
 import world.cepi.kstom.command.arguments.literal
@@ -12,10 +14,9 @@ import world.cepi.region.command.*
 import java.util.*
 
 object SelectionsSubcommand : Command("selections") {
-    val selections: Map<UUID, Selection> = mutableMapOf()
-
-    val index = ArgumentType.Integer("index")
+    val index = ArgumentType.Integer("index").min(0)
     val position = ArgumentType.RelativeBlockPosition("position")
+        .setDefaultValue { RelativeBlockPosition(BlockPosition(0, 0, 0), true, true, true) }
 
     val add = "add".literal()
     val remove = "remove".literal()
@@ -32,40 +33,38 @@ object SelectionsSubcommand : Command("selections") {
 
         // TODO: Translations
         addSyntax(pos1, position) {
-            selections as MutableMap
             val player = sender as Player
 
-            val selection = getOrCreateSelection(player)
-            selection.pos1 = context.get(position).from(player)
+            Selection.pos2(player, context[position].from(player))
+
+            player.sendMessage("Set position 1!")
         }
 
         addSyntax(pos2, position) {
-            selections as MutableMap
             val player = sender as Player
             
-            val selection = getOrCreateSelection(player)
-            selection.pos2 = context.get(position).from(player)
+            Selection.pos2(player, context[position].from(player))
+
+            player.sendMessage("Set position 2!")
         }
 
         addSyntax(RegionCommand.existingRegion, add) {
-            selections as MutableMap
+            Selection.selections as MutableMap
             val player = sender as Player
 
-            if (!selections.contains(player.uuid)) {
+            if (!Selection.selections.contains(player.uuid)) {
                 sender.sendMessage(selectionDoesNotExist)
             } else {
                 val region = context.get(RegionCommand.existingRegion)
 
-                region.addSelection(selections[player.uuid]!!)
-                selections.remove(player.uuid)
+                region.addSelection(Selection.selections[player.uuid]!!)
+                Selection.selections.remove(player.uuid)
 
                 sender.sendMessage(selectionAdded)
             }
         }
 
         addSyntax(RegionCommand.existingRegion, remove, index) {
-            val player = sender as Player
-
             val region = context.get(RegionCommand.existingRegion)
             val index = context.get(index)
 
@@ -78,19 +77,16 @@ object SelectionsSubcommand : Command("selections") {
         }
 
         addSyntax(RegionCommand.existingRegion, RegionCommand.list) {
+            val region = context.get(RegionCommand.existingRegion)
 
-        }
-    }
-
-    private fun getOrCreateSelection(player: Player): Selection {
-        selections as MutableMap
-
-        return if(selections.contains(player.uuid)) {
-            selections[player.uuid]!!
-        } else {
-            val selection = Selection(BlockPosition(0, 0, 0), BlockPosition(0, 0, 0)) // Placeholder positions
-            selections[player.uuid] = selection
-            selection
+            region.selections.forEachIndexed { index, selection ->
+                sender.sendMessage(
+                    Component.text(index)
+                        .append(Component.text(": "))
+                        .append(Component.text(selection.pos1.toString()))
+                        .append(Component.text(selection.pos2.toString()))
+                )
+            }
         }
     }
 }

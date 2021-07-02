@@ -1,10 +1,13 @@
 package world.cepi.region
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import net.minestom.server.entity.Entity
+import net.minestom.server.entity.Player
 import net.minestom.server.instance.Instance
 import net.minestom.server.utils.BlockPosition
 import world.cepi.kstom.serializer.BlockPositionSerializer
+import java.util.*
 
 /**
  * Represents two block positions and the region between them.
@@ -12,15 +15,24 @@ import world.cepi.kstom.serializer.BlockPositionSerializer
 @Serializable
 data class Selection(
     @Serializable(with = BlockPositionSerializer::class)
-    var pos1: BlockPosition,
+    val pos1: BlockPosition,
     @Serializable(with = BlockPositionSerializer::class)
-    var pos2: BlockPosition
+    val pos2: BlockPosition
 ) {
 
+    @Transient
+    val xRange = listOf(pos1.x, pos2.x).sorted().let { it[0]..it[1] }
+
+    @Transient
+    val yRange = listOf(pos1.y, pos2.y).sorted().let { it[0]..it[1] }
+
+    @Transient
+    val zRange = listOf(pos1.z, pos2.z).sorted().let { it[0]..it[1] }
+
     fun contains(position: BlockPosition): Boolean =
-        (pos1.x..pos2.x).contains(position.x) &&
-                (pos1.y..pos2.y).contains(position.y) &&
-                (pos1.z..pos2.z).contains(position.z)
+        xRange.contains(position.x) &&
+                yRange.contains(position.y) &&
+                zRange.contains(position.z)
 
     /**
      * Check if this selection contains the entity's position
@@ -52,9 +64,9 @@ data class Selection(
      * @return If any part of the [Selection] intersects with the other [selection]
      */
     fun containsSome(selection: Selection): Boolean =
-        (pos1.x..pos2.x).contains(selection.pos1.x..selection.pos2.x) &&
-                (pos1.y..pos2.y).contains(selection.pos1.y..selection.pos2.y) &&
-                (pos1.z..pos2.z).contains(selection.pos1.z..pos2.z)
+        xRange.contains(selection.pos1.x..selection.pos2.x) &&
+                yRange.contains(selection.pos1.y..selection.pos2.y) &&
+                zRange.contains(selection.pos1.z..pos2.z)
 
     /**
      * Finds all entities in an [instance] that are in this [Selection]
@@ -76,4 +88,32 @@ data class Selection(
      */
     fun IntRange.contains(value: IntRange): Boolean =
         (this.first >= value.last) && (this.last <= value.first)
+
+    companion object {
+        val selections: Map<UUID, Selection> = mutableMapOf()
+
+        operator fun get(player: Player): Selection {
+            selections as MutableMap
+
+            return if (selections.contains(player.uuid)) {
+                selections[player.uuid]!!
+            } else {
+                val selection = Selection(BlockPosition(0, 0, 0), BlockPosition(0, 0, 0)) // Placeholder positions
+                selections[player.uuid] = selection
+                selection
+            }
+        }
+
+        fun pos1(player: Player, blockPosition: BlockPosition) {
+            selections as MutableMap
+
+            selections[player.uuid] = Selection(blockPosition, this[player].pos2)
+        }
+
+        fun pos2(player: Player, blockPosition: BlockPosition) {
+            selections as MutableMap
+
+            selections[player.uuid] = Selection(this[player].pos1, blockPosition)
+        }
+    }
 }

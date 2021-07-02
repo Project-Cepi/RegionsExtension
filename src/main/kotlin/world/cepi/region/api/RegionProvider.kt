@@ -4,7 +4,6 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.minestom.server.instance.Instance
-import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.readText
 import kotlin.io.path.writeText
@@ -54,7 +53,7 @@ object RegionProvider {
         regions as MutableMap
 
         if(regions.containsKey(name)) {
-            throw IllegalStateException("attempted to add region '${name}' but a region with the same name exists")
+            throw IllegalStateException("attempted to add region '$name' but a region with the same name exists")
         }
 
         val region = Region(name, instance)

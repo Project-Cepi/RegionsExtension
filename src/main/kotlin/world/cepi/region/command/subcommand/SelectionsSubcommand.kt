@@ -35,7 +35,7 @@ object SelectionsSubcommand : Command("selections") {
         addSyntax(pos1, position) {
             val player = sender as Player
 
-            Selection.pos2(player, context[position].from(player))
+            Selection.pos1(player, context[position].from(player))
 
             player.sendMessage("Set position 1!")
         }

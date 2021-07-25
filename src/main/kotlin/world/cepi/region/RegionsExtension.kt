@@ -3,11 +3,13 @@ package world.cepi.region
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import net.minestom.server.data.DataImpl
+import net.minestom.server.event.player.PlayerSpawnEvent
 import net.minestom.server.extensions.Extension
 import world.cepi.kstom.event.listenOnly
 import world.cepi.kstom.command.register
 import world.cepi.kstom.command.unregister
 import world.cepi.region.api.RegionProvider
+import world.cepi.region.api.showRegion
 import world.cepi.region.command.RegionCommand
 import world.cepi.region.event.PlayerRegionHandler
 import world.cepi.region.event.PlayerRegionUpdateEvent
@@ -26,26 +28,10 @@ class RegionsExtension : Extension() {
         with(eventNode) {
             listenOnly(PlayerRegionHandler::register)
             listenOnly<PlayerRegionUpdateEvent> {
-
-                if (player.data == null) player.data = DataImpl()
-
-                player.data?.get<BossBar>("regions-bossbar")?.let {
-                    player.hideBossBar(it)
-                }
-
-                val bossBar = BossBar.bossBar(
-                    newRegion?.let { Component.text("Currently in ${it.name}") }
-                        ?: Component.text("Currently in no region"),
-                    0f,
-                    BossBar.Color.PINK,
-                    BossBar.Overlay.PROGRESS
-                )
-
-                player.showBossBar(
-                    bossBar
-                )
-
-                player.data?.set("regions-bossbar", bossBar)
+                player.showRegion(newRegion)
+            }
+            listenOnly<PlayerSpawnEvent> {
+                player.showRegion(null)
             }
         }
 

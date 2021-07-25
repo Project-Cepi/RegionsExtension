@@ -1,10 +1,14 @@
 package world.cepi.region.api
 
 import kotlinx.serialization.Serializable
+import net.kyori.adventure.bossbar.BossBar
+import net.kyori.adventure.text.Component
 import net.minestom.server.data.Data
 import net.minestom.server.data.DataContainer
+import net.minestom.server.data.DataImpl
 import net.minestom.server.entity.Entity
 import net.minestom.server.entity.EntityType
+import net.minestom.server.entity.Player
 import net.minestom.server.gamedata.tags.TagContainer
 import net.minestom.server.instance.Instance
 import net.minestom.server.utils.BlockPosition
@@ -128,4 +132,24 @@ data class Region(
      */
     fun findEntitiesByType(vararg types: EntityType): Collection<Entity> =
         findEntities<Entity>().filter { types.contains(it.entityType) }.toMutableList()
+}
+
+fun Player.showRegion(region: Region?) {
+    if (data == null) data = DataImpl()
+
+    data?.get<BossBar>("regions-bossbar")?.let {
+        hideBossBar(it)
+    }
+
+    val bossBar = BossBar.bossBar(
+        region?.let { Component.text(it.name) }
+            ?: Component.text("Somewhere"),
+        0f,
+        BossBar.Color.PINK,
+        BossBar.Overlay.PROGRESS
+    )
+
+    showBossBar(bossBar)
+
+    data?.set("regions-bossbar", bossBar)
 }

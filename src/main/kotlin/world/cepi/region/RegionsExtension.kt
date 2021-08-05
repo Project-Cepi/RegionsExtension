@@ -8,6 +8,7 @@ import net.minestom.server.extensions.Extension
 import world.cepi.kstom.event.listenOnly
 import world.cepi.kstom.command.register
 import world.cepi.kstom.command.unregister
+import world.cepi.region.api.Region
 import world.cepi.region.api.RegionProvider
 import world.cepi.region.api.showRegion
 import world.cepi.region.command.RegionCommand
@@ -44,6 +45,8 @@ class RegionsExtension : Extension() {
         RegionCommand.unregister()
 
         RegionProvider.saveToPath(regionsFile)
+
+        Region.saveSnapshots()
 
         logger.info("[RegionsExtension] has been disabled!")
     }

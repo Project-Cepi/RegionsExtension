@@ -1,6 +1,7 @@
 package world.cepi.region.api
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import net.minestom.server.data.Data
@@ -12,8 +13,11 @@ import net.minestom.server.entity.Player
 import net.minestom.server.gamedata.tags.TagContainer
 import net.minestom.server.instance.Instance
 import net.minestom.server.utils.BlockPosition
+import world.cepi.region.RegionsExtension
 import world.cepi.region.Selection
 import world.cepi.region.serialization.RegionSerializer
+import java.io.File
+import java.time.*
 
 /**
  * Represents a 3-dimensional non-uniform region.
@@ -43,10 +47,11 @@ data class Region(
     val defined: Boolean
         get() = selections.isEmpty()
 
+    val snapshots: List<RegionSnapshot>
+        get() = Region.snapshots.filter { it.region.name == this.name }
+
     /**
-     * The volume of this region in blocks.
-     *
-     * TODO implement it
+     * The volume of this region in cubic meters.
      */
     val volume: Int
         get() {
@@ -137,6 +142,19 @@ data class Region(
      */
     fun findEntitiesByType(vararg types: EntityType): Collection<Entity> =
         findEntities<Entity>().filter { types.contains(it.entityType) }.toMutableList()
+
+    companion object {
+        val snapshots: MutableList<RegionSnapshot> = mutableListOf()
+
+        fun saveSnapshots() {
+            val dataDir = RegionsExtension.dataDir
+            snapshots.forEach {
+                val time = LocalDateTime.ofEpochSecond(it.time, 0, ZoneOffset.UTC)
+                File(dataDir.toFile(), "${it.region.name}.snapshot-$time.json")
+                    .writeText(Json.encodeToString(RegionSnapshot.serializer(), it))
+            }
+        }
+    }
 }
 
 fun Player.showRegion(region: Region?) {

@@ -48,7 +48,12 @@ data class Region(
      *
      * TODO implement it
      */
-    val volume: Int = 0
+    val volume: Int
+        get() {
+            var total = 0
+            selections.forEach { total += (it.xRange.count() * it.yRange.count() * it.zRange.count()) }
+            return total
+        }
 
     /**
      * Checks if the given block position is inside of this

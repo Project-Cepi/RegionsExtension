@@ -5,17 +5,17 @@ import net.minestom.server.MinecraftServer
 import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException
-import net.minestom.server.command.builder.suggestion.SuggestionEntry
 import net.minestom.server.entity.Player
 import world.cepi.kepi.command.subcommand.applyHelp
 import world.cepi.kepi.messages.sendFormattedMessage
 import world.cepi.kstom.Manager
+import world.cepi.kstom.command.addSubcommands
 import world.cepi.kstom.command.arguments.literal
 import world.cepi.kstom.command.setArgumentCallback
 import world.cepi.kstom.command.addSyntax
 import world.cepi.kstom.command.arguments.suggest
 import world.cepi.region.api.RegionProvider
-import world.cepi.region.command.subcommand.SelectionsSubcommand
+import world.cepi.region.command.subcommand.*
 
 object RegionCommand : Command("region") {
     val regionName = ArgumentType.Word("name").map { name ->
@@ -104,6 +104,6 @@ object RegionCommand : Command("region") {
              """.trimIndent()
         }
 
-        addSubcommand(SelectionsSubcommand)
+        addSubcommands(SelectionsSubcommand, MetaSubcommand)
     }
 }

@@ -2,8 +2,8 @@ package world.cepi.region.meta
 
 import world.cepi.region.api.Region
 
-sealed class RegionMeta {
+interface RegionMetaCompanion {
 
-    abstract fun apply(region: Region)
+    fun unapply(region: Region)
 
 }

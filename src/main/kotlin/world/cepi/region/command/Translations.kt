@@ -8,6 +8,9 @@ const val regionCreated = "Region created!"
 const val regionDeleted = "Region deleted!"
 const val regionsList = "Regions: %1"
 
+const val regionMetaSet = "Region meta %1 set!"
+const val regionMetaRemoved = "Region meta %1 removed!"
+
 const val selectionDoesNotExist = "Selection does not exist!"
 const val selectionAdded = "Selection added!"
 const val selectionRemoved = "Selection removed!"

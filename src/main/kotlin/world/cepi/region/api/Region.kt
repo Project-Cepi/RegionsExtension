@@ -19,20 +19,18 @@ import world.cepi.region.serialization.InstanceSerializer
  */
 @Serializable
 data class Region(
-    /**
-     * The unique name of this region.
-     */
+    /** The unique name of this region. */
     val name: String,
-    /**
-     * The [Instance] in which this region
-     * resides in.
-     */
+
+    /** The [Instance] in which this region resides in. */
     @Serializable(with = InstanceSerializer::class)
     val instance: Instance,
-    /**
-     * List of all selections
-     */
-    val selections: List<Selection> = mutableListOf()
+
+    /** List of all selections */
+    val selections: MutableList<Selection> = mutableListOf(),
+
+    /** The display name of this region. */
+    var displayName: Component? = null
 ) : TagContainer() {
 
     /**
@@ -79,8 +77,6 @@ data class Region(
 
         return if (!selections.any { it.containsAll(selection) }) {
 
-            selections as MutableList
-
             selections.add(selection)
 
             // TODO
@@ -96,7 +92,6 @@ data class Region(
      */
     private fun simplifyWith(selection: Selection) {
         selections.filter { selection.containsAll(it) }.forEach {
-            selections as MutableList
             selections.remove(it)
         }
     }
@@ -146,7 +141,7 @@ fun Player.showRegion(region: Region?) {
     }
 
     val bossBar = BossBar.bossBar(
-        region?.let { Component.text(it.name) }
+        region?.let { it.displayName ?: Component.text(it.name) }
             ?: Component.text("Somewhere"),
         0f,
         BossBar.Color.PINK,

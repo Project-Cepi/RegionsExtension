@@ -1,11 +1,8 @@
 package world.cepi.region.api
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
-import net.minestom.server.data.Data
-import net.minestom.server.data.DataContainer
 import net.minestom.server.data.DataImpl
 import net.minestom.server.entity.Entity
 import net.minestom.server.entity.EntityType
@@ -13,17 +10,14 @@ import net.minestom.server.entity.Player
 import net.minestom.server.gamedata.tags.TagContainer
 import net.minestom.server.instance.Instance
 import net.minestom.server.utils.BlockPosition
-import world.cepi.region.RegionsExtension
 import world.cepi.region.Selection
-import world.cepi.region.serialization.RegionSerializer
-import java.io.File
-import java.time.*
+import world.cepi.region.serialization.InstanceSerializer
 
 /**
  * Represents a 3-dimensional non-uniform region.
  * (Though it can be uniform, if you define it like so.)
  */
-@Serializable(with = RegionSerializer::class)
+@Serializable
 data class Region(
     /**
      * The unique name of this region.
@@ -33,6 +27,7 @@ data class Region(
      * The [Instance] in which this region
      * resides in.
      */
+    @Serializable(with = InstanceSerializer::class)
     val instance: Instance,
     /**
      * List of all selections
@@ -47,8 +42,7 @@ data class Region(
     val defined: Boolean
         get() = selections.isEmpty()
 
-    val snapshots: List<RegionSnapshot>
-        get() = Region.snapshots.filter { it.region.name == this.name }
+    val snapshots: MutableList<RegionSnapshot> = mutableListOf()
 
     /**
      * The volume of this region in cubic meters.
@@ -142,19 +136,6 @@ data class Region(
      */
     fun findEntitiesByType(vararg types: EntityType): Collection<Entity> =
         findEntities<Entity>().filter { types.contains(it.entityType) }.toMutableList()
-
-    companion object {
-        val snapshots: MutableList<RegionSnapshot> = mutableListOf()
-
-        fun saveSnapshots() {
-            val dataDir = RegionsExtension.dataDir
-            snapshots.forEach {
-                val time = LocalDateTime.ofEpochSecond(it.time, 0, ZoneOffset.UTC)
-                File(dataDir.toFile(), "${it.region.name}.snapshot-$time.json")
-                    .writeText(Json.encodeToString(RegionSnapshot.serializer(), it))
-            }
-        }
-    }
 }
 
 fun Player.showRegion(region: Region?) {

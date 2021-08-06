@@ -117,3 +117,9 @@ data class Selection(
         }
     }
 }
+
+/**
+ * Gets the fully inclusive size of a range
+ */
+val IntRange.size: Int
+    get() = (this.last - this.first) + 1

@@ -36,8 +36,6 @@ class RegionsExtension : Extension() {
             }
         }
 
-
-
         logger.info("[RegionsExtension] has been enabled!")
     }
 
@@ -45,8 +43,6 @@ class RegionsExtension : Extension() {
         RegionCommand.unregister()
 
         RegionProvider.saveToPath(regionsFile)
-
-        Region.saveSnapshots()
 
         logger.info("[RegionsExtension] has been disabled!")
     }

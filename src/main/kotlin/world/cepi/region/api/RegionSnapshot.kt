@@ -1,30 +1,23 @@
 package world.cepi.region.api
 
 import kotlinx.serialization.Serializable
+import world.cepi.region.size
 import java.time.LocalTime
 
 @Serializable
-class RegionSnapshot(val region: Region) {
-    val time: Long = System.currentTimeMillis() / 1000
+class RegionSnapshot(val blockStates: List<Short>) {
+    val time: Long = System.currentTimeMillis()
 
-    val blockStates: Set<Short>
-    get() {
-        val states = mutableSetOf<Short>()
-        region.selections.forEach {
-            for (x in it.xRange) {
-                for (y in it.yRange) {
-                    for (z in it.zRange) {
-                        states.add(region.instance.getBlockStateId(x, y, z))
+    companion object {
+        fun from(region: Region) = region.selections.map { selection ->
+            selection.xRange.map { x ->
+                selection.yRange.map { y ->
+                    selection.zRange.map { z ->
+                        region.instance.getBlockStateId(x, y, z)
                     }
-                }
-            }
-        }
-
-        return states.toSet()
+                }.flatten()
+            }.flatten()
+        }.flatten()
     }
 
-    var blockStatesCache: Set<Short> = blockStates
-        private set
-
-    fun updateCache() { this.blockStatesCache = blockStates }
 }

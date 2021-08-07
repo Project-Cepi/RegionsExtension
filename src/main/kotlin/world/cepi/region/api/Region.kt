@@ -30,7 +30,10 @@ data class Region(
     val selections: MutableList<Selection> = mutableListOf(),
 
     /** The display name of this region. */
-    var displayName: Component? = null
+    var displayName: Component? = null,
+
+    /** If this region's name is hidden */
+    var hidden: Boolean = false
 ) : TagContainer() {
 
     /**
@@ -131,6 +134,10 @@ data class Region(
      */
     fun findEntitiesByType(vararg types: EntityType): Collection<Entity> =
         findEntities<Entity>().filter { types.contains(it.entityType) }.toMutableList()
+
+    companion object {
+        val blankRegionName = Component.text("Somewhere")
+    }
 }
 
 fun Player.showRegion(region: Region?) {
@@ -141,8 +148,11 @@ fun Player.showRegion(region: Region?) {
     }
 
     val bossBar = BossBar.bossBar(
-        region?.let { it.displayName ?: Component.text(it.name) }
-            ?: Component.text("Somewhere"),
+        region?.let {
+            if (it.hidden) return@let null
+
+            it.displayName ?: Component.text(it.name)
+        } ?: Region.blankRegionName,
         0f,
         BossBar.Color.PINK,
         BossBar.Overlay.PROGRESS

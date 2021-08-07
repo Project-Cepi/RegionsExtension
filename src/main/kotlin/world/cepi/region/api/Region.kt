@@ -7,10 +7,14 @@ import net.minestom.server.data.DataImpl
 import net.minestom.server.entity.Entity
 import net.minestom.server.entity.EntityType
 import net.minestom.server.entity.Player
+import net.minestom.server.event.EventFilter
+import net.minestom.server.event.EventNode
 import net.minestom.server.gamedata.tags.TagContainer
 import net.minestom.server.instance.Instance
 import net.minestom.server.utils.BlockPosition
+import world.cepi.kstom.event.listenOnly
 import world.cepi.region.Selection
+import world.cepi.region.event.PlayerRegionUpdateEvent
 import world.cepi.region.serialization.InstanceSerializer
 
 /**
@@ -137,6 +141,15 @@ data class Region(
 
     companion object {
         val blankRegionName = Component.text("Somewhere")
+
+        val noPassRegions = mutableListOf<Region>()
+        val noPassnode = EventNode.event("region-no-pass", EventFilter.PLAYER) { true }
+
+        init {
+            noPassnode.listenOnly<PlayerRegionUpdateEvent> {
+                if (noPassRegions.contains(newRegion)) isCancelled = true
+            }
+        }
     }
 }
 

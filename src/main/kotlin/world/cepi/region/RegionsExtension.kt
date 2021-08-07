@@ -1,8 +1,5 @@
 package world.cepi.region
 
-import net.kyori.adventure.bossbar.BossBar
-import net.kyori.adventure.text.Component
-import net.minestom.server.data.DataImpl
 import net.minestom.server.event.player.PlayerSpawnEvent
 import net.minestom.server.extensions.Extension
 import world.cepi.kstom.event.listenOnly
@@ -35,6 +32,8 @@ class RegionsExtension : Extension() {
                 player.showRegion(null)
             }
         }
+
+        eventNode.addChild(Region.noPassnode)
 
         logger.info("[RegionsExtension] has been enabled!")
     }

@@ -53,14 +53,14 @@ object SelectionsSubcommand : Command("selections") {
             val player = sender as Player
 
             if (!Selection.selections.contains(player.uuid)) {
-                sender.sendMessage(selectionDoesNotExist)
+                sender.sendFormattedTranslatableMessage("regions", "selection.none")
             } else {
                 val region = context.get(RegionCommand.existingRegion)
 
                 region.addSelection(Selection.selections[player.uuid]!!)
                 Selection.selections.remove(player.uuid)
 
-                sender.sendMessage(selectionAdded)
+                sender.sendFormattedTranslatableMessage("regions", "selection.add")
             }
         }
 
@@ -70,9 +70,9 @@ object SelectionsSubcommand : Command("selections") {
 
             if (index >= 0 && index < region.selections.size) {
                 region.removeSelection(region.selections[index])
-                sender.sendMessage(selectionRemoved)
+                sender.sendFormattedTranslatableMessage("regions", "selection.remove")
             } else {
-                sender.sendMessage(selectionDoesNotExist)
+                sender.sendFormattedTranslatableMessage("regions", "selection.none")
             }
         }
 

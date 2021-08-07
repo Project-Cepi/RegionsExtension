@@ -1,13 +1,14 @@
 package world.cepi.region.command
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import net.minestom.server.MinecraftServer
 import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.command.builder.exception.ArgumentSyntaxException
 import net.minestom.server.entity.Player
 import world.cepi.kepi.command.subcommand.applyHelp
-import world.cepi.kepi.messages.sendFormattedMessage
+import world.cepi.kepi.messages.sendFormattedTranslatableMessage
 import world.cepi.kstom.Manager
 import world.cepi.kstom.command.addSubcommands
 import world.cepi.kstom.command.arguments.literal
@@ -45,15 +46,15 @@ object RegionCommand : Command("region") {
     init {
         //TODO: Translations
         setArgumentCallback(regionName) {
-            sender.sendMessage(regionAlreadyExists)
+            sender.sendFormattedTranslatableMessage("regions", "exists.yes")
         }
 
         setArgumentCallback(existingRegion) {
-            sender.sendMessage(regionDoesNotExist)
+            sender.sendFormattedTranslatableMessage("regions", "exists.no")
         }
 
         setArgumentCallback(world) {
-            sender.sendMessage(worldDoesNotExist)
+            sender.sendFormattedTranslatableMessage("common", "world.none")
         }
 
         addSyntax(create, regionName, world) {
@@ -64,17 +65,17 @@ object RegionCommand : Command("region") {
             }
 
             RegionProvider.createRegion(context.get(regionName), instance)
-            sender.sendMessage(regionCreated)
+            sender.sendFormattedTranslatableMessage("regions", "create")
         }
 
         addSyntax(delete, existingRegion) {
             RegionProvider.remove(context.get(existingRegion).name)
-            sender.sendMessage(regionDeleted)
+            sender.sendFormattedTranslatableMessage("regions", "delete")
         }
 
         addSyntax(list) {
             val regions = RegionProvider.regions.values
-            sender.sendFormattedMessage(Component.text(regionsList), Component.text(regions.joinToString { it.name }))
+            sender.sendFormattedTranslatableMessage("regions", "list", Component.text(regions.joinToString { it.name }, NamedTextColor.BLUE))
         }
 
         addSyntax(show) {

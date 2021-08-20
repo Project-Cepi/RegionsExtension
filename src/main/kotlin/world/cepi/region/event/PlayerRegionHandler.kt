@@ -15,10 +15,10 @@ object PlayerRegionHandler {
             .filter { it.value.instance.uniqueId == player.instance?.uniqueId }
             .forEach { (_, region) ->
 
-                if (region.isInside(player.position.toBlockPosition())) {
+                if (region.isInside(player.position)) {
                    currentRegion = region
                 }
-                if (region.isInside(newPosition.toBlockPosition())) {
+                if (region.isInside(newPosition)) {
                     newRegion = region
                 }
             }

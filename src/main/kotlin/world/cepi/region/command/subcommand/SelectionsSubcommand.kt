@@ -3,9 +3,9 @@ package world.cepi.region.command.subcommand
 import net.kyori.adventure.text.Component
 import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.arguments.ArgumentType
+import net.minestom.server.coordinate.Vec
 import net.minestom.server.entity.Player
-import net.minestom.server.utils.BlockPosition
-import net.minestom.server.utils.location.RelativeBlockPosition
+import net.minestom.server.utils.location.RelativeVec
 import world.cepi.kepi.messages.sendFormattedTranslatableMessage
 import world.cepi.kstom.command.addSyntax
 import world.cepi.kstom.command.arguments.literal
@@ -16,7 +16,7 @@ import java.util.*
 object SelectionsSubcommand : Command("selections") {
     val index = ArgumentType.Integer("index").min(0)
     val position = ArgumentType.RelativeBlockPosition("position")
-        .setDefaultValue { RelativeBlockPosition(BlockPosition(0, 0, 0), true, true, true) }
+        .setDefaultValue { RelativeVec(Vec.ZERO, RelativeVec.CoordinateType.RELATIVE, true, true, true) }
 
     val add = "add".literal()
     val remove = "remove".literal()

@@ -3,19 +3,25 @@ package world.cepi.region.api
 import kotlinx.serialization.Serializable
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
+import net.minestom.server.coordinate.Pos
 import net.minestom.server.data.DataImpl
 import net.minestom.server.entity.Entity
 import net.minestom.server.entity.EntityType
 import net.minestom.server.entity.Player
 import net.minestom.server.event.EventFilter
 import net.minestom.server.event.EventNode
-import net.minestom.server.gamedata.tags.TagContainer
 import net.minestom.server.instance.Instance
-import net.minestom.server.utils.BlockPosition
+import net.minestom.server.tag.Tag
+import net.minestom.server.tag.TagHandler
+import org.jglrxavpok.hephaistos.nbt.NBTCompound
 import world.cepi.kstom.event.listenOnly
+import world.cepi.kstom.item.get
+import world.cepi.kstom.item.set
+import world.cepi.kstom.serializer.NBTSerializer
 import world.cepi.region.Selection
 import world.cepi.region.event.PlayerRegionUpdateEvent
 import world.cepi.region.serialization.InstanceSerializer
+import world.cepi.region.size
 
 /**
  * Represents a 3-dimensional non-uniform region.
@@ -38,7 +44,7 @@ data class Region(
 
     /** If this region's name is hidden */
     var hidden: Boolean = false
-) : TagContainer() {
+) : TagHandler {
 
     /**
      * True, if this region contains at least one block.
@@ -47,17 +53,16 @@ data class Region(
     val defined: Boolean
         get() = selections.isEmpty()
 
+    @Serializable(with = NBTSerializer::class)
+    private val nbtCompound = NBTCompound()
+
     val snapshots: MutableList<RegionSnapshot> = mutableListOf()
 
     /**
      * The volume of this region in cubic meters.
      */
     val volume: Int
-        get() {
-            var total = 0
-            selections.forEach { total += (it.xRange.count() * it.yRange.count() * it.zRange.count()) }
-            return total
-        }
+        get() = selections.map { it.xRange.size * it.yRange.size * it.zRange.size }.sum()
 
     /**
      * Checks if the given block position is inside of this
@@ -67,8 +72,8 @@ data class Region(
      *
      * @return True, only if the block is inside this region.
      */
-    fun isInside(pos: BlockPosition): Boolean
-        = selections.any { it.contains(pos) }
+    fun isInside(pos: Pos): Boolean
+        = selections.any { it.contains(pos.asVec()) }
 
     /**
      * Adds the given selection to this region.
@@ -151,12 +156,18 @@ data class Region(
             }
         }
     }
+
+    override fun <T : Any?> getTag(tag: Tag<T>): T? {
+        return tag.read(nbtCompound)
+    }
+
+    override fun <T : Any?> setTag(tag: Tag<T>, value: T?) {
+        tag.write(nbtCompound, value)
+    }
 }
 
 fun Player.showRegion(region: Region?) {
-    if (data == null) data = DataImpl()
-
-    data?.get<BossBar>("regions-bossbar")?.let {
+    get<BossBar>("regions-bossbar")?.let {
         hideBossBar(it)
     }
 
@@ -173,5 +184,5 @@ fun Player.showRegion(region: Region?) {
 
     showBossBar(bossBar)
 
-    data?.set("regions-bossbar", bossBar)
+    set("regions-bossbar", bossBar)
 }

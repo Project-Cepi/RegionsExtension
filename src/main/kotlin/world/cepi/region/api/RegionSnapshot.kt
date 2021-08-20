@@ -13,7 +13,7 @@ class RegionSnapshot(val blockStates: List<Short>) {
             selection.xRange.map { x ->
                 selection.yRange.map { y ->
                     selection.zRange.map { z ->
-                        region.instance.getBlockStateId(x, y, z)
+                        region.instance.getBlock(x, y, z).id()
                     }
                 }.flatten()
             }.flatten()

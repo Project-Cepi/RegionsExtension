@@ -17,6 +17,7 @@ import org.jglrxavpok.hephaistos.nbt.NBTCompound
 import world.cepi.kstom.event.listenOnly
 import world.cepi.kstom.item.get
 import world.cepi.kstom.item.set
+import world.cepi.kstom.serializer.BossBarSerializer
 import world.cepi.kstom.serializer.NBTSerializer
 import world.cepi.region.Selection
 import world.cepi.region.event.PlayerRegionUpdateEvent
@@ -167,7 +168,7 @@ data class Region(
 }
 
 fun Player.showRegion(region: Region?) {
-    get<BossBar>("regions-bossbar")?.let {
+    get<BossBar>("regions-bossbar", serializer = BossBarSerializer)?.let {
         hideBossBar(it)
     }
 
@@ -184,5 +185,5 @@ fun Player.showRegion(region: Region?) {
 
     showBossBar(bossBar)
 
-    set("regions-bossbar", bossBar)
+    set("regions-bossbar", BossBarSerializer, bossBar)
 }

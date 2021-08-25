@@ -18,6 +18,7 @@ import world.cepi.kstom.event.listenOnly
 import world.cepi.kstom.item.get
 import world.cepi.kstom.item.set
 import world.cepi.kstom.serializer.BossBarSerializer
+import world.cepi.kstom.serializer.ComponentSerializer
 import world.cepi.kstom.serializer.NBTSerializer
 import world.cepi.region.Selection
 import world.cepi.region.event.PlayerRegionUpdateEvent
@@ -41,6 +42,7 @@ data class Region(
     val selections: MutableList<Selection> = mutableListOf(),
 
     /** The display name of this region. */
+    @Serializable(with = ComponentSerializer::class)
     var displayName: Component? = null,
 
     /** If this region's name is hidden */

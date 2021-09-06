@@ -11,9 +11,9 @@ import kotlin.reflect.full.companionObjectInstance
 
 internal object MetaSubcommand : KepiMetaSubcommand<RegionMeta>(
     RegionMeta::class,
-    "meta",
-    "meta",
-    { instance, name ->
+    name = "meta",
+    dropString = "meta",
+    addLambda = { instance, name ->
         val region = context[RegionCommand.existingRegion]
 
         instance.apply(region)
@@ -21,12 +21,12 @@ internal object MetaSubcommand : KepiMetaSubcommand<RegionMeta>(
         sender.sendFormattedTranslatableMessage("regions", "meta.set", Component.text(name, NamedTextColor.BLUE))
     },
 
-    { clazz, name ->
+    removeLambda = { clazz, name ->
         val region = context[RegionCommand.existingRegion]
 
         (clazz.companionObjectInstance as? RegionMetaCompanion)?.unapply(region)
 
         sender.sendFormattedTranslatableMessage("regions", "meta.remove", Component.text(name, NamedTextColor.BLUE))
     },
-    RegionCommand.existingRegion
+    previousArgs = arrayOf(RegionCommand.existingRegion)
 )

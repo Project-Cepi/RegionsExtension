@@ -88,6 +88,11 @@ object SelectionsSubcommand : Command("selections") {
         addSyntax(RegionCommand.existingRegion, RegionCommand.list) {
             val region = context.get(RegionCommand.existingRegion)
 
+            if (region.selections.isEmpty()) {
+                sender.sendMessage("No selections found")
+                return@addSyntax
+            }
+
             region.selections.forEachIndexed { index, selection ->
 
                 val pos1 = arrayOf(

@@ -14,6 +14,7 @@ import net.minestom.server.instance.Instance
 import net.minestom.server.tag.Tag
 import net.minestom.server.tag.TagHandler
 import org.jglrxavpok.hephaistos.nbt.NBTCompound
+import world.cepi.kstom.Manager
 import world.cepi.kstom.event.listenOnly
 import world.cepi.kstom.item.get
 import world.cepi.kstom.item.set
@@ -21,6 +22,8 @@ import world.cepi.kstom.serializer.BossBarSerializer
 import world.cepi.kstom.serializer.ComponentSerializer
 import world.cepi.kstom.serializer.NBTSerializer
 import world.cepi.region.Selection
+import world.cepi.region.api.Region.Companion.noRegionBossBar
+import world.cepi.region.api.Region.Companion.regionTag
 import world.cepi.region.event.PlayerRegionUpdateEvent
 import world.cepi.region.serialization.InstanceSerializer
 import world.cepi.region.size
@@ -75,7 +78,7 @@ data class Region(
      *
      * @return True, only if the block is inside this region.
      */
-    fun isInside(pos: Pos): Boolean
+    fun contains(pos: Pos): Boolean
         = selections.any { it.contains(pos.asVec()) }
 
     /**
@@ -126,6 +129,16 @@ data class Region(
         return 0 // TODO
     }
 
+    val bossBar by lazy {
+        BossBar.bossBar(
+            if (hidden) return@lazy null
+            else displayName ?: Component.text(name),
+            0f,
+            BossBar.Color.PINK,
+            BossBar.Overlay.PROGRESS
+        )
+    }
+
     /**
      * A collection of all the entities by class
      * currently inside this region.
@@ -148,7 +161,14 @@ data class Region(
         findEntities<Entity>().filter { types.contains(it.entityType) }.toMutableList()
 
     companion object {
-        val blankRegionName = Component.text("Somewhere")
+        val noRegionBossBar = BossBar.bossBar(
+            Component.text("Somewhere"),
+            0f,
+            BossBar.Color.PINK,
+            BossBar.Overlay.PROGRESS
+        )
+
+        val regionTag = Tag.String("region")
 
         val noPassRegions = mutableListOf<Region>()
         val noPassnode = EventNode.event("region-no-pass", EventFilter.PLAYER) { true }
@@ -169,23 +189,14 @@ data class Region(
     }
 }
 
-fun Player.showRegion(region: Region?) {
-    get<BossBar>("regions-bossbar", serializer = BossBarSerializer)?.let {
-        hideBossBar(it)
+val Player.region: Region?
+    get() = this.getTag(regionTag)?.let { RegionProvider[it] }
+
+fun Player.refreshRegionBossBar() {
+    if (region == null) {
+        Manager.bossBar.addBossBar(this, noRegionBossBar)
+    } else {
+        Manager.bossBar.removeBossBar(this, noRegionBossBar)
+        region?.bossBar?.let { Manager.bossBar.addBossBar(this, it) }
     }
-
-    val bossBar = BossBar.bossBar(
-        region?.let {
-            if (it.hidden) return@let null
-
-            it.displayName ?: Component.text(it.name)
-        } ?: Region.blankRegionName,
-        0f,
-        BossBar.Color.PINK,
-        BossBar.Overlay.PROGRESS
-    )
-
-    showBossBar(bossBar)
-
-    set("regions-bossbar", BossBarSerializer, bossBar)
 }

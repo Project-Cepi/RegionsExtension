@@ -2,6 +2,7 @@ package world.cepi.region
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import net.minestom.server.coordinate.Point
 import net.minestom.server.coordinate.Pos
 import net.minestom.server.coordinate.Vec
 import net.minestom.server.entity.Entity
@@ -31,7 +32,7 @@ data class Selection(
     @Transient
     val zRange = listOf(pos1.z().toInt(), pos2.z().toInt()).sorted().let { it[0]..it[1] }
 
-    fun contains(position: Vec): Boolean =
+    fun contains(position: Point): Boolean =
         xRange.contains(position.x().toInt()) &&
                 yRange.contains(position.y().toInt()) &&
                 zRange.contains(position.z().toInt())

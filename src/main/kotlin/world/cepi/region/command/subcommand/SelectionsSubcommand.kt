@@ -1,6 +1,10 @@
 package world.cepi.region.command.subcommand
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextColor
 import net.minestom.server.command.builder.Command
 import net.minestom.server.command.builder.arguments.ArgumentType
 import net.minestom.server.coordinate.Vec
@@ -11,9 +15,14 @@ import world.cepi.kstom.command.addSyntax
 import world.cepi.kstom.command.arguments.literal
 import world.cepi.region.Selection
 import world.cepi.region.command.*
+import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.util.*
 
 object SelectionsSubcommand : Command("selections") {
+
+    val numberFormat = DecimalFormat("0.#")
+
     val index = ArgumentType.Integer("index").min(0)
     val position = ArgumentType.RelativeBlockPosition("position")
         .setDefaultValue { RelativeVec(Vec.ZERO, RelativeVec.CoordinateType.RELATIVE, true, true, true) }
@@ -80,11 +89,33 @@ object SelectionsSubcommand : Command("selections") {
             val region = context.get(RegionCommand.existingRegion)
 
             region.selections.forEachIndexed { index, selection ->
+
+                val pos1 = arrayOf(
+                    selection.pos1.x(),
+                    selection.pos1.y(),
+                    selection.pos1.z()
+                )
+
+                val pos1String = pos1.joinToString(", ") { numberFormat.format(it) }
+
+                val pos2 = arrayOf(
+                    selection.pos2.x(),
+                    selection.pos2.y(),
+                    selection.pos2.z()
+                )
+
+                val pos2String = pos2.joinToString(", ") { numberFormat.format(it) }
+
                 sender.sendMessage(
-                    Component.text(index)
-                        .append(Component.text(": "))
-                        .append(Component.text(selection.pos1.toString()))
-                        .append(Component.text(selection.pos2.toString()))
+                    Component.text(index + 1, NamedTextColor.GRAY)
+                        .append(Component.text(": ", NamedTextColor.GRAY))
+                        .append(Component.text("($pos1String)", TextColor.color(94, 173, 101))
+                            .hoverEvent(HoverEvent.showText(Component.text("Click to teleport!")))
+                            .clickEvent(ClickEvent.runCommand("/tp ${pos1.joinToString(" ")}")))
+                        .append(Component.text(", ", NamedTextColor.GRAY))
+                        .append(Component.text("($pos2String)", TextColor.color(94, 173, 170))
+                            .clickEvent(ClickEvent.runCommand("/tp ${pos2.joinToString(" ")}")))
+                            .hoverEvent(HoverEvent.showText(Component.text("Click to teleport!")))
                 )
             }
         }

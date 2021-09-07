@@ -1,33 +1,29 @@
 package world.cepi.region.event
 
 import net.minestom.server.event.player.PlayerMoveEvent
+import net.minestom.server.tag.Tag
 import world.cepi.kstom.Manager
 import world.cepi.region.api.Region
 import world.cepi.region.api.RegionProvider
+import world.cepi.region.api.region
 
 object PlayerRegionHandler {
 
     fun register(event: PlayerMoveEvent) = with(event) {
-        var currentRegion: Region? = null
-        var newRegion: Region? = null
 
-        RegionProvider.regions
-            .filter { it.value.instance.uniqueId == player.instance?.uniqueId }
-            .forEach { (_, region) ->
+        val oldRegion = player.region
 
-                if (region.isInside(player.position)) {
-                   currentRegion = region
-                }
-                if (region.isInside(newPosition)) {
-                    newRegion = region
-                }
-            }
+        val newRegion = RegionProvider.regions.values
+            .filter { it.instance.uniqueId == player.instance?.uniqueId }
+            .filter { it.contains(newPosition) }
+            .maxByOrNull(Region::volume)
 
-        if (currentRegion == newRegion)
+        if (oldRegion == newRegion)
             return@with
 
-        val regionEvent = PlayerRegionUpdateEvent(player, currentRegion, newRegion, player.position, newPosition)
+        val regionEvent = PlayerRegionUpdateEvent(player, oldRegion, newRegion, player.position)
         Manager.globalEvent.call(regionEvent)
+
         event.isCancelled = regionEvent.isCancelled
     }
 }

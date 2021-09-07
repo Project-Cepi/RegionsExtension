@@ -5,7 +5,7 @@ import world.cepi.region.size
 import java.time.LocalTime
 
 @Serializable
-class RegionSnapshot(val blockStates: List<Short>) {
+data class RegionSnapshot(val blockStates: List<Short>) {
     val time: Long = System.currentTimeMillis()
 
     companion object {

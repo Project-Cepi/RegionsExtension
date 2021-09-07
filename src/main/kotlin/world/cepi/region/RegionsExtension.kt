@@ -2,12 +2,11 @@ package world.cepi.region
 
 import net.minestom.server.event.player.PlayerSpawnEvent
 import net.minestom.server.extensions.Extension
+import world.cepi.kstom.Manager
 import world.cepi.kstom.event.listenOnly
 import world.cepi.kstom.command.register
 import world.cepi.kstom.command.unregister
-import world.cepi.region.api.Region
-import world.cepi.region.api.RegionProvider
-import world.cepi.region.api.showRegion
+import world.cepi.region.api.*
 import world.cepi.region.command.RegionCommand
 import world.cepi.region.event.PlayerRegionHandler
 import world.cepi.region.event.PlayerRegionUpdateEvent
@@ -26,10 +25,11 @@ class RegionsExtension : Extension() {
         with(eventNode) {
             listenOnly(PlayerRegionHandler::register)
             listenOnly<PlayerRegionUpdateEvent> {
-                player.showRegion(newRegion)
+                oldRegion?.bossBar?.let { Manager.bossBar.removeBossBar(player, it) }
+                player.refreshRegionBossBar()
             }
             listenOnly<PlayerSpawnEvent> {
-                player.showRegion(null)
+                player.refreshRegionBossBar()
             }
         }
 

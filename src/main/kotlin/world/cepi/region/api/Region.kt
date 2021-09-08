@@ -68,7 +68,9 @@ data class Region(
      * The volume of this region in cubic meters.
      */
     val volume: Int
-        get() = selections.map { it.xRange.size * it.yRange.size * it.zRange.size }.sum()
+        get() = selections
+            .filter { selections.none { sel -> sel.containsAll(it) } }
+            .map { it.xRange.size * it.yRange.size * it.zRange.size }.sum()
 
     /**
      * Checks if the given block position is inside of this

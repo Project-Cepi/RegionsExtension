@@ -24,10 +24,10 @@ object SelectionsSubcommand : Kommand({
     val position = ArgumentType.RelativeBlockPosition("position")
         .setDefaultValue { RelativeVec(Vec.ZERO, RelativeVec.CoordinateType.RELATIVE, true, true, true) }
 
-    val add = "add".literal()
-    val remove = "remove".literal()
-    val pos1 = "pos1".literal()
-    val pos2 = "pos2".literal()
+    val add by literal
+    val remove by literal
+    val pos1 by literal
+    val pos2 by literal
 
     onlyPlayers
 
@@ -48,13 +48,13 @@ object SelectionsSubcommand : Kommand({
         player.sendMessage("Set position 2!")
     }
 
-    syntax(RegionCommand.existingRegion, add) {
+    syntax(RegionArguments.existingRegion, add) {
         Selection.selections as MutableMap
 
         if (!Selection.selections.contains(player.uuid)) {
             sender.sendFormattedTranslatableMessage("regions", "selection.none")
         } else {
-            val region = context.get(RegionCommand.existingRegion)
+            val region = context.get(RegionArguments.existingRegion)
 
             region.addSelection(Selection.selections[player.uuid]!!)
             Selection.selections.remove(player.uuid)
@@ -63,8 +63,8 @@ object SelectionsSubcommand : Kommand({
         }
     }
 
-    syntax(RegionCommand.existingRegion, remove, index) {
-        val region = context.get(RegionCommand.existingRegion)
+    syntax(RegionArguments.existingRegion, remove, index) {
+        val region = context.get(RegionArguments.existingRegion)
         val currentIndex = context.get(index)
 
         if (currentIndex >= 0 && currentIndex < region.selections.size) {
@@ -75,8 +75,8 @@ object SelectionsSubcommand : Kommand({
         }
     }
 
-    syntax(RegionCommand.existingRegion, RegionCommand.list) {
-        val region = context.get(RegionCommand.existingRegion)
+    syntax(RegionArguments.existingRegion, RegionArguments.list) {
+        val region = context.get(RegionArguments.existingRegion)
 
         if (region.selections.isEmpty()) {
             sender.sendMessage("No selections found")
@@ -85,31 +85,31 @@ object SelectionsSubcommand : Kommand({
 
         region.selections.forEachIndexed { index, selection ->
 
-            val pos1 = arrayOf(
+            val pos1Array = arrayOf(
                 selection.pos1.x(),
                 selection.pos1.y(),
                 selection.pos1.z()
             )
 
-            val pos1String = pos1.joinToString(", ") { numberFormat.format(it) }
+            val pos1String = pos1Array.joinToString(", ") { numberFormat.format(it) }
 
-            val pos2 = arrayOf(
+            val pos2Array = arrayOf(
                 selection.pos2.x(),
                 selection.pos2.y(),
                 selection.pos2.z()
             )
 
-            val pos2String = pos2.joinToString(", ") { numberFormat.format(it) }
+            val pos2String = pos2Array.joinToString(", ") { numberFormat.format(it) }
 
             sender.sendMessage(
                 Component.text(index + 1, NamedTextColor.GRAY)
                     .append(Component.text(": ", NamedTextColor.GRAY))
                     .append(Component.text("($pos1String)", TextColor.color(94, 173, 101))
                         .hoverEvent(HoverEvent.showText(Component.text("Click to teleport!")))
-                        .clickEvent(ClickEvent.runCommand("/tp ${pos1.joinToString(" ")}")))
+                        .clickEvent(ClickEvent.runCommand("/tp ${pos1Array.joinToString(" ")}")))
                     .append(Component.text(", ", NamedTextColor.GRAY))
                     .append(Component.text("($pos2String)", TextColor.color(94, 173, 170))
-                        .clickEvent(ClickEvent.runCommand("/tp ${pos2.joinToString(" ")}")))
+                        .clickEvent(ClickEvent.runCommand("/tp ${pos2Array.joinToString(" ")}")))
                         .hoverEvent(HoverEvent.showText(Component.text("Click to teleport!")))
             )
         }

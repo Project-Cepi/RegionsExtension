@@ -14,9 +14,9 @@ import world.cepi.kstom.command.arguments.literal
 import world.cepi.kstom.command.arguments.suggest
 import world.cepi.kstom.command.kommand.Kommand
 import world.cepi.region.api.RegionProvider
-import world.cepi.region.command.RegionCommand.existingRegion
-import world.cepi.region.command.RegionCommand.list
-import world.cepi.region.command.RegionCommand.regionName
+import world.cepi.region.command.RegionArguments.existingRegion
+import world.cepi.region.command.RegionArguments.list
+import world.cepi.region.command.RegionArguments.regionName
 import world.cepi.region.command.subcommand.*
 
 object RegionCommand : Kommand({
@@ -31,7 +31,6 @@ object RegionCommand : Kommand({
     val delete by literal
     val show by literal
 
-    //TODO: Translations
     argumentCallback(regionName) {
         sender.sendFormattedTranslatableMessage("regions", "exists.yes")
     }
@@ -94,20 +93,4 @@ object RegionCommand : Kommand({
 
     addSubcommands(SelectionsSubcommand, MetaSubcommand)
 
-}, "region") {
-
-    val list by literal
-
-    val regionName = ArgumentType.Word("name").map { name ->
-        val region = RegionProvider[name]
-        if(region != null) throw ArgumentSyntaxException("Region exists", name, 1)
-        name
-    }
-
-    val existingRegion = ArgumentType.Word("region").map { name ->
-        RegionProvider[name]?: throw ArgumentSyntaxException("Invalid region", name, 1)
-    }.suggest {
-        RegionProvider.regions.values
-            .map { it.name }
-    }
-}
+}, "region")

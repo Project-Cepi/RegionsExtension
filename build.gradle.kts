@@ -36,13 +36,13 @@ dependencies {
     compileOnly("com.github.Minestom:Minestom:2ef8e957a0")
 
     // Get KStom
-    compileOnly("com.github.Project-Cepi:KStom:57d46cd5f9")
+    compileOnly("com.github.Project-Cepi:KStom:e3ddf8f437")
 
     // import kotlinx serialization
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
 
     // Add Kepi
-    compileOnly("com.github.Project-Cepi:Kepi:65de73c2d8")
+    compileOnly("com.github.Project-Cepi:Kepi:991a24276e")
 }
 
 tasks.withType<Test> {
@@ -70,11 +70,11 @@ tasks {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_16
+    targetCompatibility = JavaVersion.VERSION_16
 }
 
-tasks.withType<KotlinCompile> { kotlinOptions.jvmTarget = "11" }
+tasks.withType<KotlinCompile> { kotlinOptions.jvmTarget = "16" }
 val compileKotlin: KotlinCompile by tasks
 
 compileKotlin.kotlinOptions {

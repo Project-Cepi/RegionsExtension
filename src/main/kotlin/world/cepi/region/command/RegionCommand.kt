@@ -71,7 +71,7 @@ object RegionCommand : Kommand({
 
     syntax(show, existingRegion) {
         (!existingRegion).selections.forEach {
-            Renderer.fixedLine(it.pos1, it.pos2)
+            Renderer.fixedRectangle(it.pos1, it.pos2)
                 .renderOnce(Particle.particle(ParticleType.FLAME, 1, OffsetAndSpeed(0f, 0f, 0f, 0f), NoData, true), player)
         }
     }

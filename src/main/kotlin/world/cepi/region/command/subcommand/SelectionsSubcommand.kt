@@ -39,13 +39,13 @@ object SelectionsSubcommand : Kommand({
     syntax(pos1, position) {
         Selection.pos1(player, context[position].from(player))
 
-        player.sendMessage("Set position 1!")
+        player.sendFormattedTranslatableMessage("regions", "position.set.1")
     }
 
     syntax(pos2, position) {
         Selection.pos2(player, context[position].from(player))
 
-        player.sendMessage("Set position 2!")
+        player.sendFormattedTranslatableMessage("regions", "position.set.2")
     }
 
     syntax(RegionArguments.existingRegion, add) {

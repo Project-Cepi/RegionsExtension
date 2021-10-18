@@ -38,6 +38,9 @@ dependencies {
     // Get KStom
     compileOnly("com.github.Project-Cepi:KStom:e3ddf8f437")
 
+    // Add particable
+    compileOnly("com.github.Project-Cepi.Particable:common:005596d8a6")
+
     // import kotlinx serialization
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.0")
 

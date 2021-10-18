@@ -13,6 +13,11 @@ import world.cepi.kstom.Manager
 import world.cepi.kstom.command.arguments.literal
 import world.cepi.kstom.command.arguments.suggest
 import world.cepi.kstom.command.kommand.Kommand
+import world.cepi.particle.NoData
+import world.cepi.particle.Particle
+import world.cepi.particle.ParticleType
+import world.cepi.particle.data.OffsetAndSpeed
+import world.cepi.particle.renderer.Renderer
 import world.cepi.region.api.RegionProvider
 import world.cepi.region.command.RegionArguments.existingRegion
 import world.cepi.region.command.RegionArguments.list
@@ -64,8 +69,11 @@ object RegionCommand : Kommand({
         sender.sendFormattedTranslatableMessage("regions", "list", Component.text(regions.joinToString { it.name }, NamedTextColor.BLUE))
     }
 
-    syntax(show) {
-
+    syntax(show, existingRegion) {
+        (!existingRegion).selections.forEach {
+            Renderer.fixedLine(it.pos1, it.pos2)
+                .renderOnce(Particle.particle(ParticleType.FLAME, 1, OffsetAndSpeed(0f, 0f, 0f, 0f), NoData, true), player)
+        }
     }
 
     applyHelp {

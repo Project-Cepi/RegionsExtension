@@ -16,13 +16,17 @@ object PlayerRegionHandler {
         val newRegion = RegionProvider.regions.values
             .filter { it.instance.uniqueId == player.instance?.uniqueId }
             .filter { it.contains(newPosition) }
-            .maxByOrNull(Region::volume)
+            .minByOrNull(Region::volume)
 
         if (oldRegion == newRegion)
             return@with
 
         val regionEvent = PlayerRegionUpdateEvent(player, oldRegion, newRegion, player.position)
         Manager.globalEvent.call(regionEvent)
+
+        if (!regionEvent.isCancelled) {
+            player.region = newRegion
+        }
 
         event.isCancelled = regionEvent.isCancelled
     }

@@ -191,8 +191,11 @@ data class Region(
     }
 }
 
-val Player.region: Region?
-    get() = this.getTag(regionTag)?.let { RegionProvider[it] }
+var Player.region: Region?
+    get() = getTag(regionTag)?.let { RegionProvider[it] }
+    set(value) {
+        value?.name?.let { setTag(regionTag, it) } ?: removeTag(regionTag)
+    }
 
 fun Player.refreshRegionBossBar() {
     if (region == null) {

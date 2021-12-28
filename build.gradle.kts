@@ -36,7 +36,7 @@ dependencies {
     compileOnly("com.github.Minestom:Minestom:2ef8e957a0")
 
     // Get KStom
-    compileOnly("com.github.Project-Cepi:KStom:e3ddf8f437")
+    compileOnly("com.github.Project-Cepi:KStom:61d4c86234")
 
     // Add particable
     compileOnly("com.github.Project-Cepi.Particable:common:5fdbd66765")

@@ -4,7 +4,6 @@ import kotlinx.serialization.Serializable
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import net.minestom.server.coordinate.Pos
-import net.minestom.server.data.DataImpl
 import net.minestom.server.entity.Entity
 import net.minestom.server.entity.EntityType
 import net.minestom.server.entity.Player
@@ -187,7 +186,7 @@ data class Region(
     }
 
     override fun <T : Any?> setTag(tag: Tag<T>, value: T?) {
-        tag.write(nbtCompound, value)
+        tag.write(nbtCompound.toMutableCompound(), value)
     }
 }
 

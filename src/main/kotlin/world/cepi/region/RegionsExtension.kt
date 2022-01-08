@@ -6,6 +6,8 @@ import world.cepi.kstom.Manager
 import world.cepi.kstom.event.listenOnly
 import world.cepi.kstom.command.register
 import world.cepi.kstom.command.unregister
+import world.cepi.kstom.util.log
+import world.cepi.kstom.util.node
 import world.cepi.region.api.*
 import world.cepi.region.command.RegionCommand
 import world.cepi.region.event.PlayerRegionHandler
@@ -17,12 +19,12 @@ import kotlin.io.path.exists
 
 class RegionsExtension : Extension() {
 
-    override fun initialize() {
+    override fun initialize(): LoadStatus {
         RegionCommand.register()
 
         RegionProvider.loadFromPath(regionsFile)
 
-        with(eventNode) {
+        with(node) {
             listenOnly(PlayerRegionHandler::register)
             listenOnly<PlayerRegionUpdateEvent> {
                 oldRegion?.bossBar?.let { Manager.bossBar.removeBossBar(player, it) }
@@ -33,9 +35,11 @@ class RegionsExtension : Extension() {
             }
         }
 
-        eventNode.addChild(Region.noPassnode)
+        node.addChild(Region.noPassnode)
 
-        logger.info("[RegionsExtension] has been enabled!")
+        log.info("[RegionsExtension] has been enabled!")
+
+        return LoadStatus.SUCCESS
     }
 
     override fun terminate() {
@@ -43,7 +47,7 @@ class RegionsExtension : Extension() {
 
         RegionProvider.saveToPath(regionsFile)
 
-        logger.info("[RegionsExtension] has been disabled!")
+        log.info("[RegionsExtension] has been disabled!")
     }
 
     companion object {

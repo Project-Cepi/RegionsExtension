@@ -13,6 +13,8 @@ import world.cepi.kstom.Manager
 import world.cepi.kstom.command.arguments.literal
 import world.cepi.kstom.command.arguments.suggest
 import world.cepi.kstom.command.kommand.Kommand
+import world.cepi.mob.mob.mobEgg
+import world.cepi.mob.util.MobUtils
 import world.cepi.particle.NoData
 import world.cepi.particle.Particle
 import world.cepi.particle.ParticleType
@@ -36,6 +38,9 @@ object RegionCommand : Kommand({
     val delete by literal
     val show by literal
 
+    val spawn by literal
+    val amount = ArgumentType.Integer("amount").min(1).max(100)
+
     argumentCallback(regionName) {
         sender.sendFormattedTranslatableMessage("regions", "exists.yes")
     }
@@ -46,6 +51,16 @@ object RegionCommand : Kommand({
 
     argumentCallback(world) {
         sender.sendFormattedTranslatableMessage("common", "world.none")
+    }
+
+    syntax(spawn, existingRegion, amount).onlyPlayers {
+        if (!MobUtils.hasMobEgg(sender)) return@onlyPlayers
+
+        val mob = player.mobEgg ?: return@onlyPlayers
+
+        repeat(!amount) {
+            mob.spawnMob(player.instance!!, (!existingRegion).selections.random().random())
+        }
     }
 
     syntax(create, regionName, world) {

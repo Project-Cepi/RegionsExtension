@@ -38,6 +38,9 @@ dependencies {
     // Get KStom
     compileOnly("com.github.Project-Cepi:KStom:05b5e1f2a1")
 
+    // Use MobExtension
+    compileOnly("com.github.Project-Cepi:MobExtension:4eb377e311")
+
     // Add particable
     compileOnly("com.github.Project-Cepi.Particable:common:5fdbd66765")
 

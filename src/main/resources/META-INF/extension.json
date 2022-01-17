@@ -5,7 +5,8 @@
   "dependencies": [
     "KStom",
     "Kepi",
-    "Particable"
+    "Particable",
+    "MobExtension"
   ],
   "meta": {
     "downloadURL": "https://github.com/Project-Cepi/RegionsExtension/releases/download/latest/region-all.jar"

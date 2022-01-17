@@ -32,6 +32,8 @@ data class Selection(
     @Transient
     val zRange = listOf(pos1.z().toInt(), pos2.z().toInt()).sorted().let { it[0]..it[1] }
 
+    fun random() = Vec(xRange.random().toDouble(), yRange.random().toDouble(), zRange.random().toDouble())
+
     fun contains(position: Point): Boolean =
         xRange.contains(position.x().toInt()) &&
                 yRange.contains(position.y().toInt()) &&

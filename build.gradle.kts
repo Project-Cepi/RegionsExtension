@@ -36,7 +36,7 @@ dependencies {
     compileOnly("com.github.Minestom:Minestom:4ee5cbe424")
 
     // Get KStom
-    compileOnly("com.github.Project-Cepi:KStom:05b5e1f2a1")
+    compileOnly("com.github.Project-Cepi:KStom:f962764331")
 
     // Use MobExtension
     compileOnly("com.github.Project-Cepi:MobExtension:4eb377e311")

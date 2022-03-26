@@ -42,7 +42,7 @@ dependencies {
     compileOnly("com.github.Project-Cepi:MobExtension:4eb377e311")
 
     // Add particable
-    compileOnly("com.github.Project-Cepi.Particable:common:5fdbd66765")
+    compileOnly("com.github.Project-Cepi.Particable:common:ad9ec542a8")
 
     // import kotlinx serialization
     compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")

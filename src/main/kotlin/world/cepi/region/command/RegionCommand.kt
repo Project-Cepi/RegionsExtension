@@ -20,6 +20,7 @@ import world.cepi.particle.Particle
 import world.cepi.particle.ParticleType
 import world.cepi.particle.data.OffsetAndSpeed
 import world.cepi.particle.renderer.Renderer
+import world.cepi.particle.renderer.render
 import world.cepi.region.api.RegionProvider
 import world.cepi.region.command.RegionArguments.existingRegion
 import world.cepi.region.command.RegionArguments.list
@@ -87,7 +88,7 @@ object RegionCommand : Kommand({
     syntax(show, existingRegion) {
         (!existingRegion).selections.forEach {
             Renderer.fixedRectangle(it.pos1, it.pos2)
-                .renderOnce(Particle.particle(ParticleType.FLAME, 1, OffsetAndSpeed(0f, 0f, 0f, 0f), NoData, true), player)
+                .render(Particle.particle(ParticleType.FLAME, 1, OffsetAndSpeed(0f, 0f, 0f, 0f), NoData, true), player)
         }
     }
 

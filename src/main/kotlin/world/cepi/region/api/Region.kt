@@ -12,7 +12,9 @@ import net.minestom.server.event.EventNode
 import net.minestom.server.instance.Instance
 import net.minestom.server.tag.Tag
 import net.minestom.server.tag.TagHandler
+import net.minestom.server.tag.TagReadable
 import org.jglrxavpok.hephaistos.nbt.NBTCompound
+import org.jglrxavpok.hephaistos.nbt.NBTCompoundLike
 import world.cepi.kstom.Manager
 import world.cepi.kstom.event.listenOnly
 import world.cepi.kstom.item.get
@@ -187,6 +189,18 @@ data class Region(
 
     override fun <T : Any?> setTag(tag: Tag<T>, value: T?) {
         tag.write(nbtCompound.toMutableCompound(), value)
+    }
+
+    override fun readableCopy(): TagReadable {
+        TODO("Not yet implemented")
+    }
+
+    override fun updateContent(compound: NBTCompoundLike) {
+        TODO("Not yet implemented")
+    }
+
+    override fun asCompound(): NBTCompound {
+        TODO("Not yet implemented")
     }
 }
 

@@ -29,7 +29,7 @@ object SelectionsSubcommand : Kommand({
     val pos1 by literal
     val pos2 by literal
 
-    onlyPlayers
+    onlyPlayers()
 
     playerCallbackFailMessage = { sender ->
         sender.sendFormattedTranslatableMessage("common", "command.only_players")

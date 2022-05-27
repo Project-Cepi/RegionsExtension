@@ -17,9 +17,6 @@ import org.jglrxavpok.hephaistos.nbt.NBTCompound
 import org.jglrxavpok.hephaistos.nbt.NBTCompoundLike
 import world.cepi.kstom.Manager
 import world.cepi.kstom.event.listenOnly
-import world.cepi.kstom.item.get
-import world.cepi.kstom.item.set
-import world.cepi.kstom.serializer.BossBarSerializer
 import world.cepi.kstom.serializer.ComponentSerializer
 import world.cepi.kstom.serializer.NBTSerializer
 import world.cepi.region.Selection
@@ -50,8 +47,10 @@ data class Region(
     var displayName: Component? = null,
 
     /** If this region's name is hidden */
-    var hidden: Boolean = false
-) : TagHandler {
+    var hidden: Boolean = false,
+
+    val states: MutableList<RegionState> = mutableListOf()
+) : TagHandler by TagHandler.newHandler() {
 
     /**
      * True, if this region contains at least one block.
@@ -60,18 +59,13 @@ data class Region(
     val defined: Boolean
         get() = selections.isEmpty()
 
-    @Serializable(with = NBTSerializer::class)
-    private val nbtCompound = NBTCompound()
-
-    val snapshots: MutableList<RegionSnapshot> = mutableListOf()
-
     /**
      * The volume of this region in cubic meters.
      */
     val volume: Int
         get() = selections
             .filter { selections.none { sel -> sel.containsAll(it) } }
-            .map { it.xRange.size * it.yRange.size * it.zRange.size }.sum()
+            .sumOf { it.xRange.size * it.yRange.size * it.zRange.size }
 
     /**
      * Checks if the given block position is inside of this
@@ -181,26 +175,6 @@ data class Region(
                 if (noPassRegions.contains(newRegion)) isCancelled = true
             }
         }
-    }
-
-    override fun <T : Any?> getTag(tag: Tag<T>): T? {
-        return tag.read(nbtCompound)
-    }
-
-    override fun <T : Any?> setTag(tag: Tag<T>, value: T?) {
-        tag.write(nbtCompound.toMutableCompound(), value)
-    }
-
-    override fun readableCopy(): TagReadable {
-        TODO("Not yet implemented")
-    }
-
-    override fun updateContent(compound: NBTCompoundLike) {
-        TODO("Not yet implemented")
-    }
-
-    override fun asCompound(): NBTCompound {
-        TODO("Not yet implemented")
     }
 }
 

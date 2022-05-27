@@ -54,15 +54,15 @@ object RegionCommand : Kommand({
         sender.sendFormattedTranslatableMessage("common", "world.none")
     }
 
-    syntax(spawn, existingRegion, amount).onlyPlayers {
-        if (!MobUtils.hasMobEgg(sender)) return@onlyPlayers
+    syntax(spawn, existingRegion, amount) {
+        if (!MobUtils.hasMobEgg(sender)) return@syntax
 
-        val mob = player.mobEgg ?: return@onlyPlayers
+        val mob = player.mobEgg ?: return@syntax
 
         repeat(!amount) {
             mob.spawnMob(player.instance!!, (!existingRegion).selections.random().random())
         }
-    }
+    }.onlyPlayers()
 
     syntax(create, regionName, world) {
         val instance = if (sender is Player) {
@@ -115,6 +115,6 @@ object RegionCommand : Kommand({
          """.trimIndent()
     }
 
-    addSubcommands(SelectionsSubcommand, MetaSubcommand)
+    addSubcommands(SelectionsSubcommand, MetaSubcommand, StateSubcommand)
 
 }, "region")

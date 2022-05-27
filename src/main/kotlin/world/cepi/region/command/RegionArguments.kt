@@ -17,7 +17,7 @@ object RegionArguments {
     }
 
     val existingRegion = ArgumentType.Word("region").map { name ->
-        RegionProvider[name]?: throw ArgumentSyntaxException("Invalid region", name, 1)
+        RegionProvider[name] ?: throw ArgumentSyntaxException("Invalid region", name, 1)
     }.suggest {
         RegionProvider.regions.values
             .map { it.name }

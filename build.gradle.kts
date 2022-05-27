@@ -18,7 +18,6 @@ repositories {
 
     maven(url = "https://jitpack.io")
     maven(url = "https://repo.spongepowered.org/maven")
-    maven(url = "https://repo.minestom.com/repository/maven-public/")
     maven(url = "https://repo.velocitypowered.com/snapshots/")
 }
 
@@ -33,10 +32,10 @@ dependencies {
     compileOnly(kotlin("reflect"))
 
     // Compile Minestom into project
-    compileOnly("com.github.LeoDog896", "Minestom", "fc441737f4")
+    compileOnly("com.github.Minestom", "Minestom", "7867313290")
 
     // Get KStom
-    compileOnly("com.github.Project-Cepi:KStom:f962764331")
+    compileOnly("com.github.Project-Cepi:KStom:82f7000079")
 
     // Use MobExtension
     compileOnly("com.github.Project-Cepi:MobExtension:4eb377e311")
@@ -45,10 +44,13 @@ dependencies {
     compileOnly("com.github.Project-Cepi.Particable:common:ad9ec542a8")
 
     // import kotlinx serialization
-    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.1")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3")
 
     // Add Kepi
     compileOnly("com.github.Project-Cepi:Kepi:991a24276e")
+
+    // Add MiniMessage
+    implementation("net.kyori:adventure-text-minimessage:4.10.1")
 }
 
 tasks.withType<Test> {

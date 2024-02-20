@@ -50,7 +50,7 @@ dependencies {
     compileOnly("com.github.Project-Cepi:Kepi:991a24276e")
 
     // Add MiniMessage
-    implementation("net.kyori:adventure-text-minimessage:4.10.1")
+    implementation("net.kyori:adventure-text-minimessage:4.16.0")
 }
 
 tasks.withType<Test> {
